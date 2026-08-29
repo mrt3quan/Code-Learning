@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import type { ChallengeType, Lesson } from '../data/lessons';
+import type { ChallengeType, Language, Lesson } from '../data/lessons';
 import { usePyodide } from '../hooks/usePyodide';
 import { useTutorHint } from '../hooks/useTutorHint';
 import CodeBlock from './CodeBlock';
 
 interface LessonScreenProps {
   lesson: Lesson;
+  language: Language;
   alreadyCompleted: boolean;
   hasNextLesson: boolean;
   onBack: () => void;
@@ -40,6 +41,7 @@ const CHALLENGE_PLACEHOLDER: Record<ChallengeType, string> = {
 
 export default function LessonScreen({
   lesson,
+  language,
   alreadyCompleted,
   hasNextLesson,
   onBack,
@@ -54,9 +56,11 @@ export default function LessonScreen({
   const [justAwardedXp, setJustAwardedXp] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState(0);
 
+  // Only Python runs live, via Pyodide — there's no in-browser C++
+  // toolchain, so C++ examples always show their pre-written output.
   useEffect(() => {
     let cancelled = false;
-    if (status === 'ready') {
+    if (language === 'python' && status === 'ready') {
       runPython(lesson.example.code)
         .then((out) => {
           if (!cancelled) setLiveOutput(out);
@@ -68,7 +72,7 @@ export default function LessonScreen({
     return () => {
       cancelled = true;
     };
-  }, [status, lesson.example.code, runPython]);
+  }, [language, status, lesson.example.code, runPython]);
 
   const displayedOutput = liveOutput ?? lesson.example.output;
 
@@ -113,6 +117,12 @@ export default function LessonScreen({
     });
   }
 
+  const isBossChallenge = lesson.challenge.type === 'fix-the-bug';
+
+  function scrollToSection(id: string) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <button
@@ -123,21 +133,42 @@ export default function LessonScreen({
         ← Back to path
       </button>
 
-      <h1 className="mb-1 text-2xl font-bold text-slate-900 dark:text-slate-50">
+      <h1 className="mb-4 text-2xl font-bold text-slate-900 dark:text-slate-50">
         Lesson {lesson.order}: {lesson.title}
       </h1>
 
-      <section className="mt-6">
+      <div className="mb-6 flex gap-2 overflow-x-auto">
+        {[
+          { id: 'section-explain', label: 'Explain', icon: '📘' },
+          { id: 'section-example', label: 'Example', icon: '💡' },
+          {
+            id: 'section-challenge',
+            label: isBossChallenge ? 'Boss Challenge' : 'Challenge',
+            icon: isBossChallenge ? '👾' : '🎯',
+          },
+        ].map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => scrollToSection(s.id)}
+            className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-violet-300 hover:text-violet-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-violet-500 dark:hover:text-violet-400"
+          >
+            {s.icon} {s.label}
+          </button>
+        ))}
+      </div>
+
+      <section id="section-explain" className="mt-6 scroll-mt-20">
         <p className="leading-relaxed text-slate-700 dark:text-slate-300">
           {lesson.explanation}
         </p>
       </section>
 
-      <section className="mt-6">
+      <section id="section-example" className="mt-6 scroll-mt-20">
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
           Example
         </h2>
-        <CodeBlock code={lesson.example.code} />
+        <CodeBlock code={lesson.example.code} language={language} />
         <div className="mt-2 rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
           <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
             Output {status === 'ready' && liveOutput !== null && '(live)'}
@@ -148,14 +179,34 @@ export default function LessonScreen({
         </div>
       </section>
 
-      <section className="mt-8">
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-violet-500 dark:text-violet-400">
-          {CHALLENGE_LABEL[lesson.challenge.type]}
-        </h2>
+      <section
+        id="section-challenge"
+        className={`mt-8 scroll-mt-20 ${isBossChallenge ? 'rounded-2xl border border-violet-300 bg-gradient-to-br from-violet-50 to-fuchsia-50 p-5 dark:border-violet-700 dark:from-violet-950 dark:to-fuchsia-950' : ''}`}
+      >
+        {isBossChallenge ? (
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl">👾</span>
+              <div>
+                <div className="text-xs font-bold tracking-wide text-violet-500 dark:text-violet-400">
+                  BOSS CHALLENGE
+                </div>
+                <div className="font-bold text-slate-900 dark:text-slate-50">Fix the Bug</div>
+              </div>
+            </div>
+            <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-700 dark:bg-amber-400/10 dark:text-amber-300">
+              +{lesson.xpReward} XP
+            </span>
+          </div>
+        ) : (
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-violet-500 dark:text-violet-400">
+            {CHALLENGE_LABEL[lesson.challenge.type]}
+          </h2>
+        )}
         <p className="mb-3 font-medium text-slate-800 dark:text-slate-200">
           {lesson.challenge.prompt}
         </p>
-        <CodeBlock code={lesson.challenge.code} />
+        <CodeBlock code={lesson.challenge.code} language={language} />
 
         <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
           <input

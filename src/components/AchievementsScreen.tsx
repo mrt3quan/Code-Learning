@@ -2,23 +2,13 @@ import { achievements } from '../data/achievements';
 
 interface AchievementsScreenProps {
   unlockedAchievementIds: string[];
-  onBack: () => void;
 }
 
 export default function AchievementsScreen({
   unlockedAchievementIds,
-  onBack,
 }: AchievementsScreenProps) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <button
-        type="button"
-        onClick={onBack}
-        className="mb-6 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-      >
-        ← Back
-      </button>
-
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
         Achievements
       </h1>

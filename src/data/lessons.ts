@@ -26,19 +26,27 @@ export interface Lesson {
   example: LessonExample;
   challenge: LessonChallenge;
   xpReward: number;
+  isProject?: boolean;
 }
+
+export type Language = 'python' | 'cpp';
 
 export interface Track {
   id: string;
   title: string;
   subtitle: string;
+  language: Language;
+  // The path that unlocks this track (see pathOptions below). Undefined
+  // for the shared Foundations track, which is always available.
+  pathId?: PathId;
   lessons: Lesson[];
 }
 
 export const foundationsTrack: Track = {
   id: 'foundations',
   title: 'Programming Foundations',
-  subtitle: 'Learn Python one bite-sized lesson at a time.',
+  subtitle: 'Learn core programming concepts in Python, then apply them to your specialization.',
+  language: 'python',
   lessons: [
     {
       id: 'variables',
@@ -243,6 +251,8 @@ export const aiDeveloperTrack: Track = {
   id: 'ai-developer',
   title: 'AI Developer · Python',
   subtitle: 'Combine data, files, and logic into your first real program.',
+  language: 'python',
+  pathId: 'python',
   lessons: [
     {
       id: 'ai-lists-and-dicts',
@@ -313,11 +323,223 @@ export const aiDeveloperTrack: Track = {
         hint: 'Assignment and comparison look almost identical but use a different number of equals signs.',
       },
       xpReward: 25,
+      isProject: true,
     },
   ],
 };
 
-export const tracks: Track[] = [foundationsTrack, aiDeveloperTrack];
+export const gameDeveloperTrack: Track = {
+  id: 'game-developer',
+  title: 'Game Developer · C++',
+  subtitle: "Translate what you already know into C++, with the extras game code leans on.",
+  language: 'cpp',
+  pathId: 'cpp',
+  lessons: [
+    {
+      id: 'cpp-variables',
+      order: 1,
+      title: 'Variables & Types',
+      explanation:
+        "Unlike Python, C++ needs you to state each variable's type up front — int for whole numbers, double for decimals, std::string for text. Once declared, a variable's type can't change. You print with std::cout and the << operator, chaining as many values as you like.",
+      example: {
+        code:
+          'int score = 10;\nstd::string name = "Ava";\nstd::cout << name << " scored " << score << std::endl;',
+        output: 'Ava scored 10',
+      },
+      challenge: {
+        type: 'predict-output',
+        code: 'int score = 10;\nscore = score + 5;\nstd::cout << score << std::endl;',
+        prompt: 'What does this print?',
+        correctAnswer: '15',
+        wrongAnswerExplanation:
+          'score starts at 10. score = score + 5 takes the current value (10), adds 5, and stores the result back into score — the same rule as Python, just with a declared int type. std::cout then prints 15.',
+        hint: 'Read score = score + 5 as: take the old value, add 5, save it back.',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-conditions',
+      order: 2,
+      title: 'Conditions',
+      explanation:
+        "C++ conditions work like Python's, but every block needs curly braces {} instead of indentation, and the condition itself goes in parentheses. Only one branch runs — the first one that's true.",
+      example: {
+        code:
+          'int temperature = 75;\nif (temperature > 80) {\n    std::cout << "Hot" << std::endl;\n} else if (temperature > 60) {\n    std::cout << "Nice" << std::endl;\n} else {\n    std::cout << "Cold" << std::endl;\n}',
+        output: 'Nice',
+      },
+      challenge: {
+        type: 'predict-output',
+        code:
+          'int age = 15;\nif (age >= 18) {\n    std::cout << "Adult" << std::endl;\n} else if (age >= 13) {\n    std::cout << "Teen" << std::endl;\n} else {\n    std::cout << "Child" << std::endl;\n}',
+        prompt: 'What does this print?',
+        correctAnswer: 'Teen',
+        wrongAnswerExplanation:
+          'C++ checks each condition in order, same as Python. age >= 18 is false (15 is not >= 18), so it checks age >= 13 next. That one is true, so it prints Teen — the else never runs.',
+        hint: "Conditions are checked top to bottom. Find the first one that's true.",
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-loops',
+      order: 3,
+      title: 'Loops',
+      explanation:
+        'A for loop in C++ has three parts inside its parentheses, separated by semicolons: a starting value, a condition to keep looping, and how to update each pass. It keeps running as long as the condition stays true.',
+      example: {
+        code: 'for (int i = 0; i < 3; i++) {\n    std::cout << i << std::endl;\n}',
+        output: '0\n1\n2',
+      },
+      challenge: {
+        type: 'predict-output',
+        code:
+          'int total = 0;\nfor (int i = 1; i < 5; i++) {\n    total += i;\n}\nstd::cout << total << std::endl;',
+        prompt: 'What does this print?',
+        correctAnswer: '10',
+        wrongAnswerExplanation:
+          'The loop runs while i < 5, so i takes 1, 2, 3, 4 — the same numbers Python\'s range(1, 5) would give. Each pass adds i to total: 1, then 3, then 6, then 10.',
+        hint: 'List out the values i takes, then add them one at a time.',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-while-loops',
+      order: 4,
+      title: 'While Loops',
+      explanation:
+        "A while loop in C++ repeats as long as its condition stays true, just like Python — but you still have to update the loop variable yourself inside the braces, or it never stops.",
+      example: {
+        code: 'int count = 0;\nwhile (count < 3) {\n    std::cout << count << std::endl;\n    count++;\n}',
+        output: '0\n1\n2',
+      },
+      challenge: {
+        type: 'fill-in-blank',
+        code:
+          'int count = 0;\nwhile (count ____ 3) {\n    std::cout << count << std::endl;\n    count++;\n}',
+        prompt: 'Fill in the blank so this prints 0, 1, and 2 — but stops before printing 3.',
+        correctAnswer: '<',
+        wrongAnswerExplanation:
+          'count starts at 0 and increases by 1 each loop. count < 3 keeps looping while count is 0, 1, or 2 — printing each — and stops the moment count becomes 3. Using <= would print 3 too.',
+        hint: 'You want the loop to stop the instant count reaches 3, not include it.',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-arrays',
+      order: 5,
+      title: 'Arrays',
+      explanation:
+        "An array holds a fixed number of values of the same type, back to back in memory. You declare its size up front, and access an item with square brackets — indexes start at 0, just like Python lists, but there's no negative indexing.",
+      example: {
+        code: 'int scores[3] = {10, 20, 30};\nstd::cout << scores[1] << std::endl;',
+        output: '20',
+      },
+      challenge: {
+        type: 'predict-output',
+        code: 'int scores[4] = {10, 20, 30, 40};\nstd::cout << scores[3] << std::endl;',
+        prompt: 'What does this print?',
+        correctAnswer: '40',
+        wrongAnswerExplanation:
+          "Indexes start at 0, so scores[3] is the 4th element — 40. There's no negative indexing in C++ like scores[-1] in Python; you have to count from the front.",
+        hint: 'Count from 0: scores[0] is the first element. Which one is scores[3]?',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-functions',
+      order: 6,
+      title: 'Functions',
+      explanation:
+        "A C++ function declares the type of value it returns before its name — int for a whole number, void for nothing at all. Parameters need types too. Like Python, defining a function doesn't run it; you still have to call it.",
+      example: {
+        code: 'int square(int n) {\n    return n * n;\n}\n\nstd::cout << square(4) << std::endl;',
+        output: '16',
+      },
+      challenge: {
+        type: 'fix-the-bug',
+        code: 'int square(int n) {\n    return n * n\n}\n\nstd::cout << square(4) << std::endl;',
+        prompt: "This won't compile. What's missing from the return line?",
+        correctAnswer: ';',
+        wrongAnswerExplanation:
+          'Every statement in C++ needs a semicolon at the end, including return. return n * n without one is a syntax error — it should read return n * n;.',
+        hint: 'Compare the return line to the std::cout line below it — what does it end with that this line is missing?',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-structs',
+      order: 7,
+      title: 'Structs (Game Objects)',
+      explanation:
+        'A struct bundles related variables into one custom type — perfect for a game entity like a player, with fields for health and position all in one place. You create a struct value and reach its fields with a dot.',
+      example: {
+        code: 'struct Player {\n    int health;\n    int x;\n};\n\nPlayer hero = {100, 0};\nstd::cout << hero.health << std::endl;',
+        output: '100',
+      },
+      challenge: {
+        type: 'predict-output',
+        code:
+          'struct Player {\n    int health;\n    int x;\n};\n\nPlayer hero = {100, 0};\nhero.health -= 30;\nstd::cout << hero.health << std::endl;',
+        prompt: 'What does this print?',
+        correctAnswer: '70',
+        wrongAnswerExplanation:
+          'hero.health starts at 100. hero.health -= 30 subtracts 30 and stores the result back — the same rule as score -= 5 on a plain variable — leaving 70.',
+        hint: '-= subtracts and reassigns, just like += adds and reassigns.',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-references',
+      order: 8,
+      title: 'References',
+      explanation:
+        "Passing a variable to a function normally passes a copy — changes inside the function don't affect the original. Adding & to a parameter makes it a reference instead: the function works on the original variable directly, which is how game code avoids copying large objects every frame.",
+      example: {
+        code:
+          'void heal(int &health) {\n    health += 10;\n}\n\nint hp = 50;\nheal(hp);\nstd::cout << hp << std::endl;',
+        output: '60',
+      },
+      challenge: {
+        type: 'fill-in-blank',
+        code:
+          'void damage(int ____health) {\n    health -= 20;\n}\n\nint hp = 100;\ndamage(hp);\nstd::cout << hp << std::endl;',
+        prompt: 'Fill in the blank so damage() actually changes hp, printing 80.',
+        correctAnswer: '&',
+        wrongAnswerExplanation:
+          'Without &, health is just a copy — damage() would change its own local copy and hp would stay 100. int &health makes health a reference to the original hp, so subtracting from it changes hp itself.',
+        hint: 'You need the symbol that turns a parameter into a reference to the original variable.',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'cpp-project-health-bar',
+      order: 9,
+      title: 'Project: Health Bar',
+      explanation:
+        'This project combines a struct, a function, and a loop: a Player struct holds health, a takeDamage function reduces it, and a loop applies damage across a few turns — printing the remaining health after each one.',
+      example: {
+        code:
+          'struct Player {\n    int health;\n};\n\nvoid takeDamage(Player &p, int amount) {\n    p.health -= amount;\n}\n\nPlayer hero = {100};\nfor (int turn = 0; turn < 3; turn++) {\n    takeDamage(hero, 10);\n    std::cout << hero.health << std::endl;\n}',
+        output: '90\n80\n70',
+      },
+      challenge: {
+        type: 'fix-the-bug',
+        code:
+          'struct Player {\n    int health;\n};\n\nvoid takeDamage(Player p, int amount) {\n    p.health -= amount;\n}\n\nPlayer hero = {100};\ntakeDamage(hero, 25);\nstd::cout << hero.health << std::endl;',
+        prompt:
+          'This prints 100 instead of 75 — takeDamage seems to do nothing. What should the parameter Player p become so it actually changes hero?',
+        correctAnswer: 'Player &p',
+        wrongAnswerExplanation:
+          'Player p takes a copy of hero, so subtracting inside takeDamage only changes the copy — hero itself never changes, so it still prints 100. Player &p makes p a reference to the original hero, so the change sticks.',
+        hint: 'This is the same fix as the References lesson — what turns a parameter into a reference?',
+      },
+      xpReward: 25,
+      isProject: true,
+    },
+  ],
+};
+
+export const tracks: Track[] = [foundationsTrack, aiDeveloperTrack, gameDeveloperTrack];
 
 export function findLessonWithTrack(
   lessonId: string,
@@ -339,15 +561,13 @@ export interface PathOption {
   available: boolean;
 }
 
-// C++ execution needs a WASM-compiled toolchain and sandboxing this app
-// doesn't have yet, so that path is shown but not selectable.
 export const pathOptions: PathOption[] = [
   {
     id: 'cpp',
     title: 'Game Developer',
     language: 'C++',
     description: 'Build games with high-performance C++.',
-    available: false,
+    available: true,
   },
   {
     id: 'python',

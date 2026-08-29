@@ -147,10 +147,11 @@ export function useProgress() {
       if (!found) return false;
       const { lesson, track } = found;
 
-      // The AI Developer track only opens up once Foundations is fully
-      // complete and the learner has actually chosen the Python path.
-      if (track.id === 'ai-developer') {
-        if (!isFoundationsComplete || progress.selectedPath !== 'python') {
+      // Any track gated behind a path choice (AI Developer, Game Developer)
+      // only opens up once Foundations is fully complete and the learner
+      // has actually chosen that specific path.
+      if (track.pathId) {
+        if (!isFoundationsComplete || progress.selectedPath !== track.pathId) {
           return false;
         }
       }

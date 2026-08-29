@@ -1,26 +1,45 @@
 # CodeQuest
 
-A gamified, browser-based Python learning app: a 9-lesson "Programming
-Foundations" track, then a path choice into an "AI Developer" track — with
+A gamified, browser-based coding app: a shared "Programming Foundations"
+track (Python), then a choice between an "AI Developer" (Python) or "Game
+Developer" (C++) specialization — with a full dashboard/sidebar app shell,
 achievements, mastery tracking, and an optional AI tutor.
 
 ## What's here
 
-- Home screen listing a track's lessons with locked/unlocked/completed
-  state and a per-lesson mastery indicator (★★★ solved first try, down to
-  ★☆☆ after several attempts).
-- Each lesson: explanation → live-run code example → challenge → immediate
-  feedback → XP award → unlock next lesson. Three challenge types:
-  Predict-the-Output, Fill-in-the-Blank, and Fix-the-Bug.
-- After Programming Foundations is complete, a "Choose Your Path" screen
-  offers Game Developer (C++) and AI Developer (Python). C++ execution
-  needs a WASM toolchain this app doesn't have, so that card is shown as
-  "Coming soon" rather than faked; Python leads into the AI Developer
-  track (Lists & Dictionaries, Files, and a Quiz Game project).
-- Achievements for milestones the app already tracks (first lesson, a
+- **App shell** — a persistent sidebar (Dashboard, Map, Lessons, Challenges,
+  Projects, Achievements, Community, Store) and a header with a real,
+  XP-derived Level badge (100 XP/level), streak, and light/dark toggle.
+  Collapses to a drawer on mobile.
+- **Dashboard** — a mascot greeting, an illustrated horizontal "Learning
+  Map" of the active track, a Continue Learning card, and your most recent
+  achievement.
+- **Map** — the same learning-map visualization full-page, with tabs to
+  switch between every track you've unlocked.
+- **Lessons** — the classic locked/unlocked/completed list, with a
+  per-lesson mastery indicator (★★★ solved first try, down to ★☆☆ after
+  several attempts).
+- **Challenges** — every challenge you've unlocked so far, browsable in one
+  flat list for review, tagged by type.
+- **Projects** — the track's capstone project lessons as cards.
+- **Achievements** — milestones the app already tracks (first lesson, a
   first-try solve, visit streaks, XP totals, finishing a track, choosing a
-  path) — a pop-in toast on unlock, plus a screen (trophy icon in the
-  header) listing all of them, locked and unlocked.
+  path) — a pop-in toast on unlock, plus a grid of all of them.
+- **Community / Store** — both need real backend features (accounts,
+  payments) this app doesn't have, so they're honest "coming soon" pages
+  rather than faked functionality.
+- Each lesson: explanation → code example → challenge → immediate feedback
+  → XP award → unlock next lesson, with quick-jump pills (Explain / Example
+  / Challenge) and, for Fix-the-Bug challenges, a "Boss Challenge" visual
+  treatment. Three challenge types: Predict-the-Output, Fill-in-the-Blank,
+  and Fix-the-Bug.
+- **Two specializations after Foundations**: AI Developer (Python — Lists &
+  Dictionaries, Files, a Quiz Game project) and Game Developer (C++ —
+  Variables & Types through References, ending in a Health Bar project).
+  Both are real content. C++ has no in-browser compiler (that's a genuinely
+  separate, much larger project), so its examples show correct, hand-verified
+  output rather than a live-executed one — same fallback mode Python uses
+  when Pyodide can't load.
 - An on-demand AI Tutor: after a wrong answer, an "Ask AI Tutor" button
   calls a small backend that asks Claude for a hint. Hints escalate across
   attempts — a gentle nudge on the first miss, a more specific pointer on
@@ -29,11 +48,9 @@ achievements, mastery tracking, and an optional AI tutor.
   off-topic. It's on-demand rather than automatic so the free, instant
   static hint is never blocked on a network call, and the app works
   exactly as before if the tutor isn't configured.
-- A persistent header with total XP, a daily visit streak, an achievements
-  button, the current lesson name, and a light/dark mode toggle.
 - Progress (XP, completed lessons, streak, chosen path, mastery,
   achievements) is saved to `localStorage` — refreshing the page does not
-  lose it. Still no accounts.
+  lose it. Still no accounts, no fabricated user identity anywhere.
 - Lesson content lives in one place: `src/data/lessons.ts`, organized into
   `Track`s. This is the seam later phases extend — add lessons/tracks/
   challenge types there, not inline in components.
@@ -41,7 +58,7 @@ achievements, mastery tracking, and an optional AI tutor.
   [Pyodide](https://pyodide.org) (loaded from a CDN at runtime) so the shown
   output is computed live rather than hand-typed. If Pyodide can't load
   (offline, blocked network), the lesson falls back to the pre-written
-  output stored in the lesson data.
+  output stored in the lesson data — the same fallback C++ always uses.
 
 ## Stack
 

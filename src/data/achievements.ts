@@ -3,7 +3,7 @@
 // tracking infrastructure, just thresholds evaluated against progress
 // state that already exists (completed lessons, streak, XP, path, mastery).
 
-import { aiDeveloperTrack, foundationsTrack } from './lessons';
+import { aiDeveloperTrack, foundationsTrack, gameDeveloperTrack } from './lessons';
 
 export interface Achievement {
   id: string;
@@ -61,6 +61,12 @@ export const achievements: Achievement[] = [
     description: 'Complete the AI Developer track.',
     icon: '🤖',
   },
+  {
+    id: 'game-developer',
+    title: 'Game Developer',
+    description: 'Complete the Game Developer track.',
+    icon: '🎮',
+  },
 ];
 
 export interface AchievementProgressInput {
@@ -95,6 +101,10 @@ export function evaluateAchievements(input: AchievementProgressInput): string[] 
 
   if (aiDeveloperTrack.lessons.every((l) => input.completedLessonIds.includes(l.id))) {
     unlocked.push('ai-developer');
+  }
+
+  if (gameDeveloperTrack.lessons.every((l) => input.completedLessonIds.includes(l.id))) {
+    unlocked.push('game-developer');
   }
 
   return unlocked;

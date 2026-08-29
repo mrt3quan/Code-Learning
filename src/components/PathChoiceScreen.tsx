@@ -13,7 +13,7 @@ export default function PathChoiceScreen({ onBack, onChoosePath }: PathChoiceScr
         onClick={onBack}
         className="mb-6 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
       >
-        ← Back to path
+        ← Back to Dashboard
       </button>
 
       <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
