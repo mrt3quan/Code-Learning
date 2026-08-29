@@ -3,17 +3,21 @@ import type { Theme } from '../hooks/useTheme';
 interface HeaderProps {
   xp: number;
   streak: number;
+  achievementCount: number;
   currentLessonTitle: string | null;
   theme: Theme;
   onToggleTheme: () => void;
+  onOpenAchievements: () => void;
 }
 
 export default function Header({
   xp,
   streak,
+  achievementCount,
   currentLessonTitle,
   theme,
   onToggleTheme,
+  onOpenAchievements,
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-900 text-white">
@@ -43,6 +47,15 @@ export default function Header({
             <span aria-hidden>⭐</span>
             <span>{xp} XP</span>
           </div>
+
+          <button
+            type="button"
+            onClick={onOpenAchievements}
+            aria-label={`Achievements (${achievementCount} unlocked)`}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-300 hover:bg-white/10"
+          >
+            🏆
+          </button>
 
           <button
             type="button"

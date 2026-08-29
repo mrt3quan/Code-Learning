@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ChallengeType, Lesson } from '../data/lessons';
 import { usePyodide } from '../hooks/usePyodide';
+import { useTutorHint } from '../hooks/useTutorHint';
 import CodeBlock from './CodeBlock';
 
 interface LessonScreenProps {
@@ -46,6 +47,7 @@ export default function LessonScreen({
   onGoNext,
 }: LessonScreenProps) {
   const { status, runPython } = usePyodide();
+  const tutor = useTutorHint();
   const [liveOutput, setLiveOutput] = useState<string | null>(null);
   const [answer, setAnswer] = useState('');
   const [feedback, setFeedback] = useState<Feedback>('none');
@@ -94,6 +96,21 @@ export default function LessonScreen({
   function handleRetry() {
     setAnswer('');
     setFeedback('none');
+    tutor.reset();
+  }
+
+  function handleAskTutor() {
+    tutor.askTutor({
+      lessonTitle: lesson.title,
+      explanation: lesson.explanation,
+      challengeCode: lesson.challenge.code,
+      challengePrompt: lesson.challenge.prompt,
+      correctAnswer: lesson.challenge.correctAnswer,
+      staticHint: lesson.challenge.hint,
+      staticExplanation: lesson.challenge.wrongAnswerExplanation,
+      userAnswer: answer,
+      wrongAttempts,
+    });
   }
 
   return (
@@ -210,13 +227,43 @@ export default function LessonScreen({
             <p className="mt-2 text-sm italic text-amber-700 dark:text-amber-400">
               Hint: {lesson.challenge.hint}
             </p>
-            <button
-              type="button"
-              onClick={handleRetry}
-              className="mt-3 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:bg-slate-800 dark:text-amber-300 dark:hover:bg-slate-700"
-            >
-              Try again
-            </button>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleRetry}
+                className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:bg-slate-800 dark:text-amber-300 dark:hover:bg-slate-700"
+              >
+                Try again
+              </button>
+              {tutor.status !== 'ready' && (
+                <button
+                  type="button"
+                  onClick={handleAskTutor}
+                  disabled={tutor.status === 'loading'}
+                  className="rounded-lg border border-violet-300 bg-white px-3 py-1.5 text-sm font-semibold text-violet-700 hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-violet-700 dark:bg-slate-800 dark:text-violet-300 dark:hover:bg-slate-700"
+                >
+                  {tutor.status === 'loading' ? '🤖 Thinking…' : '🤖 Ask AI Tutor'}
+                </button>
+              )}
+            </div>
+
+            {tutor.status === 'unavailable' && (
+              <p className="mt-2 text-xs text-amber-600 dark:text-amber-500">
+                AI Tutor isn't available right now — the hint above still applies.
+              </p>
+            )}
+
+            {tutor.status === 'ready' && tutor.hint && (
+              <div className="animate-pop-in mt-3 rounded-lg border border-violet-200 bg-violet-50 px-3 py-2.5 dark:border-violet-800 dark:bg-violet-950">
+                <div className="text-xs font-semibold uppercase tracking-wide text-violet-500 dark:text-violet-400">
+                  🤖 AI Tutor
+                </div>
+                <p className="mt-1 text-sm leading-relaxed text-violet-900 dark:text-violet-200">
+                  {tutor.hint}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </section>

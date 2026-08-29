@@ -26,6 +26,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Public worker URL, not a secret. Set this repo variable once the
+          # tutor worker is deployed (Settings > Secrets and variables >
+          # Actions > Variables). Left unset, the app just falls back to the
+          # static explanation/hint content.
+          VITE_TUTOR_API_URL: ${{ vars.TUTOR_API_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

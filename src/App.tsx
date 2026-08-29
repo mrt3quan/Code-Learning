@@ -6,6 +6,8 @@ import Header from './components/Header';
 import HomeScreen from './components/HomeScreen';
 import PathChoiceScreen from './components/PathChoiceScreen';
 import LessonScreen from './components/LessonScreen';
+import AchievementsScreen from './components/AchievementsScreen';
+import AchievementToast from './components/AchievementToast';
 
 type View =
   | { screen: 'track-home'; trackId: string }
@@ -17,9 +19,13 @@ export default function App() {
     screen: 'track-home',
     trackId: foundationsTrack.id,
   });
+  const [showAchievements, setShowAchievements] = useState(false);
   const {
     xp,
     streak,
+    unlockedAchievementIds,
+    justUnlocked,
+    clearJustUnlocked,
     isFoundationsComplete,
     isLessonUnlocked,
     isLessonCompleted,
@@ -57,10 +63,14 @@ export default function App() {
       <Header
         xp={xp}
         streak={streak}
+        achievementCount={unlockedAchievementIds.length}
         currentLessonTitle={currentLesson ? currentLesson.lesson.title : null}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onOpenAchievements={() => setShowAchievements(true)}
       />
+
+      <AchievementToast achievementIds={justUnlocked} onDismiss={clearJustUnlocked} />
 
       {view.screen === 'lesson' && currentLesson && (() => {
         const { lesson, track } = currentLesson;
@@ -94,7 +104,9 @@ export default function App() {
           isLessonCompleted={isLessonCompleted}
           getMastery={getMastery}
           onSelectLesson={goToLesson}
-          showPathChoiceCta={activeTrack.id === foundationsTrack.id && isFoundationsComplete}
+          showPathChoiceCta={
+            activeTrack.id === foundationsTrack.id && isFoundationsComplete
+          }
           onChoosePath={() => setView({ screen: 'path-choice' })}
           onBackToFoundations={
             activeTrack.id !== foundationsTrack.id
@@ -102,6 +114,17 @@ export default function App() {
               : undefined
           }
         />
+      )}
+
+      {/* Rendered as an overlay, not a view swap, so the screen underneath
+          (an in-progress lesson especially) never unmounts and loses state. */}
+      {showAchievements && (
+        <div className="fixed inset-0 z-40 overflow-y-auto bg-slate-50 dark:bg-slate-950">
+          <AchievementsScreen
+            unlockedAchievementIds={unlockedAchievementIds}
+            onBack={() => setShowAchievements(false)}
+          />
+        </div>
       )}
     </div>
   );

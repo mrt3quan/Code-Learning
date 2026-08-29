@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { foundationsTrack, findLessonWithTrack, type PathId } from '../data/lessons';
+import { evaluateAchievements } from '../data/achievements';
 
 const STORAGE_KEY = 'codequest.progress.v1';
 
@@ -10,6 +11,7 @@ interface ProgressState {
   lastVisitedDate: string | null;
   selectedPath: PathId | null;
   lessonAttempts: Record<string, number>;
+  unlockedAchievementIds: string[];
 }
 
 const DEFAULT_STATE: ProgressState = {
@@ -19,6 +21,7 @@ const DEFAULT_STATE: ProgressState = {
   lastVisitedDate: null,
   selectedPath: null,
   lessonAttempts: {},
+  unlockedAchievementIds: [],
 };
 
 function loadProgress(): ProgressState {
@@ -44,6 +47,9 @@ function loadProgress(): ProgressState {
           parsed.lessonAttempts && typeof parsed.lessonAttempts === 'object'
             ? parsed.lessonAttempts
             : {},
+        unlockedAchievementIds: Array.isArray(parsed.unlockedAchievementIds)
+          ? parsed.unlockedAchievementIds
+          : [],
       };
     }
     return DEFAULT_STATE;
@@ -87,14 +93,49 @@ export function masteryTier(wrongAttempts: number): MasteryTier {
   return 'needs-review';
 }
 
+// Achievements only ever change as a side effect of the three places
+// progress itself changes (initial load/streak rollover, completing a
+// lesson, choosing a path) — so this is called at each of those call
+// sites directly, rather than as a separate reactive effect watching
+// the whole state shape.
+function mergeNewAchievements(
+  state: ProgressState,
+): { state: ProgressState; newlyEarned: string[] } {
+  const eligible = evaluateAchievements({
+    completedLessonIds: state.completedLessonIds,
+    streak: state.streak,
+    xp: state.xp,
+    selectedPath: state.selectedPath,
+    lessonAttempts: state.lessonAttempts,
+  });
+  const newlyEarned = eligible.filter((id) => !state.unlockedAchievementIds.includes(id));
+  if (newlyEarned.length === 0) return { state, newlyEarned };
+  return {
+    state: {
+      ...state,
+      unlockedAchievementIds: [...state.unlockedAchievementIds, ...newlyEarned],
+    },
+    newlyEarned,
+  };
+}
+
+function initialProgress(): { state: ProgressState; newlyEarned: string[] } {
+  return mergeNewAchievements(withTodaysVisit(loadProgress()));
+}
+
 export function useProgress() {
-  const [progress, setProgress] = useState<ProgressState>(() =>
-    withTodaysVisit(loadProgress()),
+  const [progress, setProgress] = useState<ProgressState>(
+    () => initialProgress().state,
+  );
+  const [justUnlocked, setJustUnlocked] = useState<string[]>(
+    () => initialProgress().newlyEarned,
   );
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   }, [progress]);
+
+  const clearJustUnlocked = useCallback(() => setJustUnlocked([]), []);
 
   const isFoundationsComplete = foundationsTrack.lessons.every((l) =>
     progress.completedLessonIds.includes(l.id),
@@ -136,28 +177,36 @@ export function useProgress() {
 
   const completeLesson = useCallback(
     (lessonId: string, xpReward: number, wrongAttempts: number) => {
-      setProgress((prev) => {
-        if (prev.completedLessonIds.includes(lessonId)) return prev;
-        return {
-          ...prev,
-          xp: prev.xp + xpReward,
-          completedLessonIds: [...prev.completedLessonIds, lessonId],
-          lessonAttempts: { ...prev.lessonAttempts, [lessonId]: wrongAttempts },
-        };
+      if (progress.completedLessonIds.includes(lessonId)) return;
+      const { state, newlyEarned } = mergeNewAchievements({
+        ...progress,
+        xp: progress.xp + xpReward,
+        completedLessonIds: [...progress.completedLessonIds, lessonId],
+        lessonAttempts: { ...progress.lessonAttempts, [lessonId]: wrongAttempts },
       });
+      setProgress(state);
+      if (newlyEarned.length > 0) setJustUnlocked((j) => [...j, ...newlyEarned]);
     },
-    [],
+    [progress],
   );
 
-  const selectPath = useCallback((path: PathId) => {
-    setProgress((prev) => ({ ...prev, selectedPath: path }));
-  }, []);
+  const selectPath = useCallback(
+    (path: PathId) => {
+      const { state, newlyEarned } = mergeNewAchievements({ ...progress, selectedPath: path });
+      setProgress(state);
+      if (newlyEarned.length > 0) setJustUnlocked((j) => [...j, ...newlyEarned]);
+    },
+    [progress],
+  );
 
   return {
     xp: progress.xp,
     completedLessonIds: progress.completedLessonIds,
     streak: progress.streak,
     selectedPath: progress.selectedPath,
+    unlockedAchievementIds: progress.unlockedAchievementIds,
+    justUnlocked,
+    clearJustUnlocked,
     isFoundationsComplete,
     isLessonUnlocked,
     isLessonCompleted,
