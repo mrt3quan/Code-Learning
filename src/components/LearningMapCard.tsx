@@ -1,4 +1,6 @@
 import type { Track } from '../data/lessons';
+import TrackIcon from './TrackIcon';
+import bgFloatingIslands from '../assets/bg-floating-islands.png';
 
 interface LearningMapCardProps {
   track: Track;
@@ -18,18 +20,20 @@ export default function LearningMapCard({
   );
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-sky-50 to-emerald-50 p-6 dark:border-slate-800 dark:from-slate-800 dark:to-slate-900">
-      {/* Soft decorative backdrop — evokes the "adventure map" feel without any external art assets. */}
-      <div className="pointer-events-none absolute -top-8 -left-8 h-32 w-32 rounded-full bg-sky-200/50 blur-2xl dark:bg-sky-500/10" />
-      <div className="pointer-events-none absolute -right-6 -bottom-10 h-36 w-36 rounded-full bg-emerald-200/50 blur-2xl dark:bg-emerald-500/10" />
+    <div
+      className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 bg-cover bg-center p-6 dark:border-slate-800"
+      style={{ backgroundImage: `url(${bgFloatingIslands})` }}
+    >
+      <div className="absolute inset-0 bg-white/5 dark:bg-slate-900/55" />
 
       <div className="relative mb-6 flex justify-center">
-        <span className="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-slate-800 shadow-sm dark:bg-slate-800 dark:text-slate-100">
-          {track.language === 'python' ? '🐍' : '🎮'} {track.title}
+        <span className="flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-slate-800 shadow-sm dark:bg-slate-800 dark:text-slate-100">
+          <TrackIcon language={track.language} size={18} />
+          {track.title}
         </span>
       </div>
 
-      <div className="relative flex items-start overflow-x-auto pb-2">
+      <div className="relative flex items-start overflow-x-auto rounded-xl bg-white/70 p-4 backdrop-blur-sm dark:bg-slate-900/70">
         {track.lessons.map((lesson, i) => {
           const unlocked = isLessonUnlocked(lesson.id);
           const completed = isLessonCompleted(lesson.id);

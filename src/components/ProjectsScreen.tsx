@@ -1,4 +1,5 @@
 import { tracks } from '../data/lessons';
+import TrackIcon from './TrackIcon';
 
 interface ProjectsScreenProps {
   isLessonUnlocked: (lessonId: string) => boolean;
@@ -39,7 +40,7 @@ export default function ProjectsScreen({
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-2xl">{track.language === 'python' ? '🐍' : '🎮'}</span>
+                <TrackIcon language={track.language} size={32} />
                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-400/10 dark:text-amber-300">
                   +{lesson.xpReward} XP
                 </span>

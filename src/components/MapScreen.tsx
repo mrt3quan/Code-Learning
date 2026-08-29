@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { tracks } from '../data/lessons';
 import LearningMapCard from './LearningMapCard';
+import TrackIcon from './TrackIcon';
 
 interface MapScreenProps {
   defaultTrackId: string;
@@ -32,13 +33,14 @@ export default function MapScreen({
               key={t.id}
               type="button"
               onClick={() => setSelectedId(t.id)}
-              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                 activeTrack?.id === t.id
                   ? 'bg-violet-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
               }`}
             >
-              {t.language === 'python' ? '🐍' : '🎮'} {t.title}
+              <TrackIcon language={t.language} size={16} />
+              {t.title}
             </button>
           ))}
         </div>

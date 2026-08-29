@@ -1,4 +1,5 @@
 import { tracks, type ChallengeType } from '../data/lessons';
+import TrackIcon from './TrackIcon';
 
 interface ChallengesScreenProps {
   isLessonUnlocked: (lessonId: string) => boolean;
@@ -46,8 +47,8 @@ export default function ChallengesScreen({
                 onClick={() => onSelectLesson(lesson.id)}
                 className="flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm transition hover:border-violet-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-violet-500"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-lg dark:bg-slate-800">
-                  {track.language === 'python' ? '🐍' : '🎮'}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                  <TrackIcon language={track.language} size={22} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">

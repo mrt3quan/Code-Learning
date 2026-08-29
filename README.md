@@ -13,7 +13,9 @@ achievements, mastery tracking, and an optional AI tutor.
   Collapses to a drawer on mobile.
 - **Dashboard** — a mascot greeting, an illustrated horizontal "Learning
   Map" of the active track, a Continue Learning card, and your most recent
-  achievement.
+  achievement. The mascot, the C++/Python track icons, and the map's
+  floating-islands background are real art (`src/assets/`, from the
+  project's own asset pack) — not emoji or hand-drawn placeholders.
 - **Map** — the same learning-map visualization full-page, with tabs to
   switch between every track you've unlocked.
 - **Lessons** — the classic locked/unlocked/completed list, with a
