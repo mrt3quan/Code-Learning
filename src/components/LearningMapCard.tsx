@@ -1,3 +1,4 @@
+import { Check, Lock } from 'lucide-react';
 import type { Track } from '../data/lessons';
 import TrackIcon from './TrackIcon';
 import bgFloatingIslands from '../assets/bg-floating-islands.png';
@@ -56,7 +57,13 @@ export default function LearningMapCard({
                         : 'bg-slate-200 text-slate-400 ring-white dark:bg-slate-700 dark:text-slate-500 dark:ring-slate-800'
                   }`}
                 >
-                  {completed ? '✓' : unlocked ? lesson.order : '🔒'}
+                  {completed ? (
+                    <Check size={20} strokeWidth={3} />
+                  ) : unlocked ? (
+                    lesson.order
+                  ) : (
+                    <Lock size={16} />
+                  )}
                 </div>
                 <span className="text-center text-xs leading-tight font-medium text-slate-600 dark:text-slate-300">
                   {lesson.title}

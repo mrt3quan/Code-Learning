@@ -1,3 +1,4 @@
+import { Check, Lock } from 'lucide-react';
 import type { MasteryTier } from '../hooks/useProgress';
 import type { Track } from '../data/lessons';
 
@@ -95,7 +96,13 @@ export default function HomeScreen({
                         : 'bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600'
                   }`}
                 >
-                  {completed ? '✅' : unlocked ? lesson.order : '🔒'}
+                  {completed ? (
+                    <Check size={20} strokeWidth={3} />
+                  ) : unlocked ? (
+                    lesson.order
+                  ) : (
+                    <Lock size={16} />
+                  )}
                 </div>
 
                 <div className="flex-1">

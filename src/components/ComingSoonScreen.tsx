@@ -1,16 +1,22 @@
+import type { LucideIcon } from 'lucide-react';
 import { MascotTip } from './Mascot';
 
 interface ComingSoonScreenProps {
   title: string;
-  icon: string;
+  icon: LucideIcon;
   description: string;
 }
 
-export default function ComingSoonScreen({ title, icon, description }: ComingSoonScreenProps) {
+export default function ComingSoonScreen({
+  title,
+  icon: Icon,
+  description,
+}: ComingSoonScreenProps) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-        {icon} {title}
+      <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-900 dark:text-slate-50">
+        <Icon size={26} />
+        {title}
       </h1>
       <p className="mt-1 text-slate-500 dark:text-slate-400">{description}</p>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BookOpen, Lightbulb, Target, Swords, CheckCircle2 } from 'lucide-react';
 import type { ChallengeType, Language, Lesson } from '../data/lessons';
 import { usePyodide } from '../hooks/usePyodide';
 import { useTutorHint } from '../hooks/useTutorHint';
@@ -139,21 +140,22 @@ export default function LessonScreen({
 
       <div className="mb-6 flex gap-2 overflow-x-auto">
         {[
-          { id: 'section-explain', label: 'Explain', icon: '📘' },
-          { id: 'section-example', label: 'Example', icon: '💡' },
+          { id: 'section-explain', label: 'Explain', Icon: BookOpen },
+          { id: 'section-example', label: 'Example', Icon: Lightbulb },
           {
             id: 'section-challenge',
             label: isBossChallenge ? 'Boss Challenge' : 'Challenge',
-            icon: isBossChallenge ? '👾' : '🎯',
+            Icon: isBossChallenge ? Swords : Target,
           },
         ].map((s) => (
           <button
             key={s.id}
             type="button"
             onClick={() => scrollToSection(s.id)}
-            className="shrink-0 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-violet-300 hover:text-violet-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-violet-500 dark:hover:text-violet-400"
+            className="flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-violet-300 hover:text-violet-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-violet-500 dark:hover:text-violet-400"
           >
-            {s.icon} {s.label}
+            <s.Icon size={14} />
+            {s.label}
           </button>
         ))}
       </div>
@@ -186,7 +188,7 @@ export default function LessonScreen({
         {isBossChallenge ? (
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <span className="text-2xl">👾</span>
+              <Swords size={26} className="text-violet-500 dark:text-violet-400" />
               <div>
                 <div className="text-xs font-bold tracking-wide text-violet-500 dark:text-violet-400">
                   BOSS CHALLENGE
@@ -231,7 +233,8 @@ export default function LessonScreen({
         {feedback === 'correct' && (
           <div className="animate-pop-in mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 dark:border-emerald-800 dark:bg-emerald-950">
             <div className="flex items-center gap-2 font-semibold text-emerald-700 dark:text-emerald-400">
-              <span>✅ Correct!</span>
+              <CheckCircle2 size={20} />
+              <span>Correct!</span>
               {justAwardedXp && (
                 <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-bold text-white">
                   +{lesson.xpReward} XP

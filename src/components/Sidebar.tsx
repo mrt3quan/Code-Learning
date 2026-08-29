@@ -1,3 +1,15 @@
+import {
+  LayoutDashboard,
+  Map as MapIcon,
+  BookOpen,
+  Target,
+  Rocket,
+  Trophy,
+  Users,
+  ShoppingBag,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 import { Mascot } from './Mascot';
 
 export type NavKey =
@@ -10,15 +22,15 @@ export type NavKey =
   | 'community'
   | 'store';
 
-const NAV_ITEMS: { key: NavKey; label: string; icon: string }[] = [
-  { key: 'dashboard', label: 'Dashboard', icon: '🏠' },
-  { key: 'map', label: 'Map', icon: '🗺️' },
-  { key: 'lessons', label: 'Lessons', icon: '📚' },
-  { key: 'challenges', label: 'Challenges', icon: '🎯' },
-  { key: 'projects', label: 'Projects', icon: '🚀' },
-  { key: 'achievements', label: 'Achievements', icon: '🏆' },
-  { key: 'community', label: 'Community', icon: '👥' },
-  { key: 'store', label: 'Store', icon: '🛍️' },
+const NAV_ITEMS: { key: NavKey; label: string; icon: LucideIcon }[] = [
+  { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { key: 'map', label: 'Map', icon: MapIcon },
+  { key: 'lessons', label: 'Lessons', icon: BookOpen },
+  { key: 'challenges', label: 'Challenges', icon: Target },
+  { key: 'projects', label: 'Projects', icon: Rocket },
+  { key: 'achievements', label: 'Achievements', icon: Trophy },
+  { key: 'community', label: 'Community', icon: Users },
+  { key: 'store', label: 'Store', icon: ShoppingBag },
 ];
 
 interface SidebarProps {
@@ -44,27 +56,30 @@ export default function Sidebar({ active, onNavigate, onClose }: SidebarProps) {
             aria-label="Close menu"
             className="rounded-md p-1 text-slate-400 hover:bg-white/10 hover:text-white md:hidden"
           >
-            ✕
+            <X size={18} />
           </button>
         )}
       </div>
 
       <nav className="mt-6 flex flex-1 flex-col gap-1">
-        {NAV_ITEMS.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => onNavigate(item.key)}
-            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
-              active === item.key
-                ? 'bg-violet-600 text-white'
-                : 'text-slate-300 hover:bg-white/5 hover:text-white'
-            }`}
-          >
-            <span aria-hidden>{item.icon}</span>
-            {item.label}
-          </button>
-        ))}
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => onNavigate(item.key)}
+              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
+                active === item.key
+                  ? 'bg-violet-600 text-white'
+                  : 'text-slate-300 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <Icon size={18} strokeWidth={2} aria-hidden="true" />
+              {item.label}
+            </button>
+          );
+        })}
       </nav>
 
       <div className="mt-4 rounded-2xl bg-slate-800 p-3">

@@ -1,3 +1,4 @@
+import { CheckCircle2, Lock } from 'lucide-react';
 import { tracks } from '../data/lessons';
 import TrackIcon from './TrackIcon';
 
@@ -51,13 +52,17 @@ export default function ProjectsScreen({
               <p className="mt-1 line-clamp-3 text-sm text-slate-500 dark:text-slate-400">
                 {lesson.explanation}
               </p>
-              <div className="mt-3 text-sm font-semibold">
+              <div className="mt-3 flex items-center gap-1.5 text-sm font-semibold">
                 {completed ? (
-                  <span className="text-emerald-600 dark:text-emerald-400">✅ Completed</span>
+                  <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 size={16} /> Completed
+                  </span>
                 ) : unlocked ? (
                   <span className="text-violet-600 dark:text-violet-400">Start →</span>
                 ) : (
-                  <span className="text-slate-400 dark:text-slate-500">🔒 Locked</span>
+                  <span className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
+                    <Lock size={14} /> Locked
+                  </span>
                 )}
               </div>
             </button>

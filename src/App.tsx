@@ -11,6 +11,7 @@ import ChallengesScreen from './components/ChallengesScreen';
 import ProjectsScreen from './components/ProjectsScreen';
 import AchievementsScreen from './components/AchievementsScreen';
 import ComingSoonScreen from './components/ComingSoonScreen';
+import { Users, ShoppingBag } from 'lucide-react';
 import PathChoiceScreen from './components/PathChoiceScreen';
 import LessonScreen from './components/LessonScreen';
 import AchievementToast from './components/AchievementToast';
@@ -177,7 +178,7 @@ export default function App() {
           {view.screen === 'nav' && activeNav === 'community' && (
             <ComingSoonScreen
               title="Community"
-              icon="👥"
+              icon={Users}
               description="Connect with other learners, share progress, and help each other out."
             />
           )}
@@ -185,7 +186,7 @@ export default function App() {
           {view.screen === 'nav' && activeNav === 'store' && (
             <ComingSoonScreen
               title="Store"
-              icon="🛍️"
+              icon={ShoppingBag}
               description="Spend XP on themes, avatars, and boosts."
             />
           )}

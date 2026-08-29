@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Copy, Check } from 'lucide-react';
 import type { Language } from '../data/lessons';
 
 interface CodeBlockProps {
@@ -34,8 +35,9 @@ export default function CodeBlock({ code, language }: CodeBlockProps) {
         <button
           type="button"
           onClick={handleCopy}
-          className="text-xs font-medium text-slate-400 hover:text-slate-200"
+          className="flex items-center gap-1 text-xs font-medium text-slate-400 hover:text-slate-200"
         >
+          {copied ? <Check size={13} /> : <Copy size={13} />}
           {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>

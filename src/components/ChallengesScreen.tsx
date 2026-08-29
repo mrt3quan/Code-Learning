@@ -1,3 +1,4 @@
+import { CheckCircle2 } from 'lucide-react';
 import { tracks, type ChallengeType } from '../data/lessons';
 import TrackIcon from './TrackIcon';
 
@@ -55,7 +56,13 @@ export default function ChallengesScreen({
                     <span className="font-semibold text-slate-900 dark:text-slate-100">
                       {lesson.title}
                     </span>
-                    {completed && <span title="Completed">✅</span>}
+                    {completed && (
+                      <CheckCircle2
+                        size={16}
+                        className="text-emerald-600 dark:text-emerald-400"
+                        aria-label="Completed"
+                      />
+                    )}
                   </div>
                   <div className="text-xs text-slate-500 dark:text-slate-400">{track.title}</div>
                 </div>
