@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
+/* Manual, class-based dark mode: toggled by adding/removing `dark` on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, Consolas, monospace;
+}
+
+:root {
+  --page-bg: #f4f5fb;
+  --page-fg: #0f172a;
+}
+
+html.dark {
+  --page-bg: #0b1120;
+  --page-fg: #e2e8f0;
+  color-scheme: dark;
 }
 
 html {
@@ -12,7 +26,8 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: #f4f5fb;
+  background: var(--page-bg);
+  color: var(--page-fg);
 }
 
 @keyframes pop-in {
