@@ -8,7 +8,7 @@ interface LessonScreenProps {
   alreadyCompleted: boolean;
   hasNextLesson: boolean;
   onBack: () => void;
-  onComplete: () => void;
+  onComplete: (wrongAttempts: number) => void;
   onGoNext: () => void;
 }
 
@@ -50,6 +50,7 @@ export default function LessonScreen({
   const [answer, setAnswer] = useState('');
   const [feedback, setFeedback] = useState<Feedback>('none');
   const [justAwardedXp, setJustAwardedXp] = useState(false);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,11 +82,12 @@ export default function LessonScreen({
     if (isCorrect) {
       setFeedback('correct');
       if (!alreadyCompleted) {
-        onComplete();
+        onComplete(wrongAttempts);
         setJustAwardedXp(true);
       }
     } else {
       setFeedback('incorrect');
+      setWrongAttempts((n) => n + 1);
     }
   }
 
@@ -168,6 +170,13 @@ export default function LessonScreen({
                 </span>
               )}
             </div>
+            {justAwardedXp && (
+              <p className="mt-1 text-sm text-emerald-600 dark:text-emerald-500">
+                {wrongAttempts === 0
+                  ? '🏆 Mastered — solved on the first try.'
+                  : `Solved after ${wrongAttempts} ${wrongAttempts === 1 ? 'retry' : 'retries'}.`}
+              </p>
+            )}
             <div className="mt-3 flex gap-2">
               {hasNextLesson ? (
                 <button

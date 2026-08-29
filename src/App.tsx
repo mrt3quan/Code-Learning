@@ -1,66 +1,106 @@
 import { useState } from 'react';
-import { lessons } from './data/lessons';
+import { foundationsTrack, tracks, findLessonWithTrack, type PathId } from './data/lessons';
 import { useProgress } from './hooks/useProgress';
 import { useTheme } from './hooks/useTheme';
 import Header from './components/Header';
 import HomeScreen from './components/HomeScreen';
+import PathChoiceScreen from './components/PathChoiceScreen';
 import LessonScreen from './components/LessonScreen';
 
+type View =
+  | { screen: 'track-home'; trackId: string }
+  | { screen: 'path-choice' }
+  | { screen: 'lesson'; lessonId: string };
+
 export default function App() {
-  const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
+  const [view, setView] = useState<View>({
+    screen: 'track-home',
+    trackId: foundationsTrack.id,
+  });
   const {
     xp,
     streak,
+    isFoundationsComplete,
     isLessonUnlocked,
     isLessonCompleted,
+    getMastery,
     completeLesson,
+    selectPath,
   } = useProgress();
   const { theme, toggleTheme } = useTheme();
 
-  const currentLesson = lessons.find((l) => l.id === currentLessonId) ?? null;
-  const currentIndex = currentLesson
-    ? lessons.findIndex((l) => l.id === currentLesson.id)
-    : -1;
-  const nextLesson =
-    currentIndex >= 0 ? lessons[currentIndex + 1] : undefined;
+  const currentLesson =
+    view.screen === 'lesson' ? findLessonWithTrack(view.lessonId) : undefined;
 
-  function goHome() {
-    setCurrentLessonId(null);
+  function goToTrackHome(trackId: string) {
+    setView({ screen: 'track-home', trackId });
   }
 
   function goToLesson(lessonId: string) {
     if (isLessonUnlocked(lessonId)) {
-      setCurrentLessonId(lessonId);
+      setView({ screen: 'lesson', lessonId });
     }
   }
+
+  function handleChoosePath(path: PathId) {
+    selectPath(path);
+    goToTrackHome('ai-developer');
+  }
+
+  const activeTrack =
+    view.screen === 'track-home'
+      ? (tracks.find((t) => t.id === view.trackId) ?? foundationsTrack)
+      : undefined;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <Header
         xp={xp}
         streak={streak}
-        currentLessonTitle={currentLesson ? currentLesson.title : null}
+        currentLessonTitle={currentLesson ? currentLesson.lesson.title : null}
         theme={theme}
         onToggleTheme={toggleTheme}
       />
 
-      {currentLesson ? (
-        <LessonScreen
-          key={currentLesson.id}
-          lesson={currentLesson}
-          alreadyCompleted={isLessonCompleted(currentLesson.id)}
-          hasNextLesson={Boolean(nextLesson)}
-          onBack={goHome}
-          onComplete={() =>
-            completeLesson(currentLesson.id, currentLesson.xpReward)
-          }
-          onGoNext={() => nextLesson && goToLesson(nextLesson.id)}
+      {view.screen === 'lesson' && currentLesson && (() => {
+        const { lesson, track } = currentLesson;
+        const nextLesson = track.lessons.find((l) => l.order === lesson.order + 1);
+        return (
+          <LessonScreen
+            key={lesson.id}
+            lesson={lesson}
+            alreadyCompleted={isLessonCompleted(lesson.id)}
+            hasNextLesson={Boolean(nextLesson)}
+            onBack={() => goToTrackHome(track.id)}
+            onComplete={(wrongAttempts) =>
+              completeLesson(lesson.id, lesson.xpReward, wrongAttempts)
+            }
+            onGoNext={() => nextLesson && goToLesson(nextLesson.id)}
+          />
+        );
+      })()}
+
+      {view.screen === 'path-choice' && (
+        <PathChoiceScreen
+          onBack={() => goToTrackHome(foundationsTrack.id)}
+          onChoosePath={handleChoosePath}
         />
-      ) : (
+      )}
+
+      {view.screen === 'track-home' && activeTrack && (
         <HomeScreen
+          track={activeTrack}
           isLessonUnlocked={isLessonUnlocked}
           isLessonCompleted={isLessonCompleted}
+          getMastery={getMastery}
           onSelectLesson={goToLesson}
+          showPathChoiceCta={activeTrack.id === foundationsTrack.id && isFoundationsComplete}
+          onChoosePath={() => setView({ screen: 'path-choice' })}
+          onBackToFoundations={
+            activeTrack.id !== foundationsTrack.id
+              ? () => goToTrackHome(foundationsTrack.id)
+              : undefined
+          }
         />
       )}
     </div>

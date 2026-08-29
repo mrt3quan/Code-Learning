@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { lessons } from '../data/lessons';
+import { foundationsTrack, findLessonWithTrack, type PathId } from '../data/lessons';
 
 const STORAGE_KEY = 'codequest.progress.v1';
 
@@ -8,6 +8,8 @@ interface ProgressState {
   completedLessonIds: string[];
   streak: number;
   lastVisitedDate: string | null;
+  selectedPath: PathId | null;
+  lessonAttempts: Record<string, number>;
 }
 
 const DEFAULT_STATE: ProgressState = {
@@ -15,6 +17,8 @@ const DEFAULT_STATE: ProgressState = {
   completedLessonIds: [],
   streak: 0,
   lastVisitedDate: null,
+  selectedPath: null,
+  lessonAttempts: {},
 };
 
 function loadProgress(): ProgressState {
@@ -32,6 +36,14 @@ function loadProgress(): ProgressState {
         streak: typeof parsed.streak === 'number' ? parsed.streak : 0,
         lastVisitedDate:
           typeof parsed.lastVisitedDate === 'string' ? parsed.lastVisitedDate : null,
+        selectedPath:
+          parsed.selectedPath === 'cpp' || parsed.selectedPath === 'python'
+            ? parsed.selectedPath
+            : null,
+        lessonAttempts:
+          parsed.lessonAttempts && typeof parsed.lessonAttempts === 'object'
+            ? parsed.lessonAttempts
+            : {},
       };
     }
     return DEFAULT_STATE;
@@ -65,6 +77,16 @@ function withTodaysVisit(prev: ProgressState): ProgressState {
   return { ...prev, streak, lastVisitedDate: today };
 }
 
+export type MasteryTier = 'mastered' | 'practiced' | 'needs-review';
+
+// A basic per-lesson mastery signal, not a full skill tree: how many wrong
+// submissions it took before the learner got the challenge right.
+export function masteryTier(wrongAttempts: number): MasteryTier {
+  if (wrongAttempts === 0) return 'mastered';
+  if (wrongAttempts <= 2) return 'practiced';
+  return 'needs-review';
+}
+
 export function useProgress() {
   const [progress, setProgress] = useState<ProgressState>(() =>
     withTodaysVisit(loadProgress()),
@@ -74,15 +96,29 @@ export function useProgress() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   }, [progress]);
 
+  const isFoundationsComplete = foundationsTrack.lessons.every((l) =>
+    progress.completedLessonIds.includes(l.id),
+  );
+
   const isLessonUnlocked = useCallback(
     (lessonId: string) => {
-      const lesson = lessons.find((l) => l.id === lessonId);
-      if (!lesson) return false;
+      const found = findLessonWithTrack(lessonId);
+      if (!found) return false;
+      const { lesson, track } = found;
+
+      // The AI Developer track only opens up once Foundations is fully
+      // complete and the learner has actually chosen the Python path.
+      if (track.id === 'ai-developer') {
+        if (!isFoundationsComplete || progress.selectedPath !== 'python') {
+          return false;
+        }
+      }
+
       if (lesson.order === 1) return true;
-      const previous = lessons.find((l) => l.order === lesson.order - 1);
+      const previous = track.lessons.find((l) => l.order === lesson.order - 1);
       return previous ? progress.completedLessonIds.includes(previous.id) : true;
     },
-    [progress.completedLessonIds],
+    [progress.completedLessonIds, progress.selectedPath, isFoundationsComplete],
   );
 
   const isLessonCompleted = useCallback(
@@ -90,23 +126,43 @@ export function useProgress() {
     [progress.completedLessonIds],
   );
 
-  const completeLesson = useCallback((lessonId: string, xpReward: number) => {
-    setProgress((prev) => {
-      if (prev.completedLessonIds.includes(lessonId)) return prev;
-      return {
-        ...prev,
-        xp: prev.xp + xpReward,
-        completedLessonIds: [...prev.completedLessonIds, lessonId],
-      };
-    });
+  const getMastery = useCallback(
+    (lessonId: string): MasteryTier | null => {
+      if (!progress.completedLessonIds.includes(lessonId)) return null;
+      return masteryTier(progress.lessonAttempts[lessonId] ?? 0);
+    },
+    [progress.completedLessonIds, progress.lessonAttempts],
+  );
+
+  const completeLesson = useCallback(
+    (lessonId: string, xpReward: number, wrongAttempts: number) => {
+      setProgress((prev) => {
+        if (prev.completedLessonIds.includes(lessonId)) return prev;
+        return {
+          ...prev,
+          xp: prev.xp + xpReward,
+          completedLessonIds: [...prev.completedLessonIds, lessonId],
+          lessonAttempts: { ...prev.lessonAttempts, [lessonId]: wrongAttempts },
+        };
+      });
+    },
+    [],
+  );
+
+  const selectPath = useCallback((path: PathId) => {
+    setProgress((prev) => ({ ...prev, selectedPath: path }));
   }, []);
 
   return {
     xp: progress.xp,
     completedLessonIds: progress.completedLessonIds,
     streak: progress.streak,
+    selectedPath: progress.selectedPath,
+    isFoundationsComplete,
     isLessonUnlocked,
     isLessonCompleted,
+    getMastery,
     completeLesson,
+    selectPath,
   };
 }
