@@ -23,14 +23,14 @@ export default function AchievementToast({ achievementIds, onDismiss }: Achievem
         return (
           <div
             key={id}
-            className="animate-pop-in flex items-center gap-3 rounded-xl border border-amber-300 bg-white px-4 py-3 shadow-lg dark:border-amber-700 dark:bg-slate-800"
+            className="animate-pop-in flex items-center gap-3 rounded-xl border border-dawn-sand-300 bg-parchment-50 px-4 py-3 shadow-lg dark:border-dawn-sand-700 dark:bg-pine-800"
           >
             <span className="text-2xl">{achievement.icon}</span>
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wide text-amber-500 dark:text-amber-400">
+              <div className="text-xs font-semibold uppercase tracking-wide text-dawn-sand-600 dark:text-dawn-sand-400">
                 Achievement unlocked
               </div>
-              <div className="font-semibold text-slate-900 dark:text-slate-100">
+              <div className="font-display font-bold text-pine-900 dark:text-parchment-100">
                 {achievement.title}
               </div>
             </div>

@@ -2,19 +2,122 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Palette and type drawn from the app's own art (src/assets): the soft,
+ * painterly floating-islands trail (moss hills, misty lavender peaks, a
+ * warm sandy path, small pink/yellow blooms) and the glossy white mascot
+ * with its cyan glow and lavender antenna tip. This replaces the generic
+ * slate/violet/amber/emerald dashboard palette everywhere in the app.
+ */
 @theme {
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-sans: "Nunito Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Baloo 2", "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+
+  /* Moss — hillside green. Nature, success, primary "world" surfaces. */
+  --color-moss-50: #eef5ec;
+  --color-moss-100: #dcead7;
+  --color-moss-200: #b9d5b0;
+  --color-moss-300: #9cc28e;
+  --color-moss-400: #6a9d68;
+  --color-moss-500: #4c7a52;
+  --color-moss-600: #3e6644;
+  --color-moss-700: #2f4f38;
+  --color-moss-800: #24402c;
+  --color-moss-900: #1b3122;
+  --color-moss-950: #12211a;
+
+  /* Sky Mist — the hazy background mountains and sky. Cool, quiet accents. */
+  --color-sky-mist-50: #f1f6fc;
+  --color-sky-mist-100: #e1ecf8;
+  --color-sky-mist-200: #cadff2;
+  --color-sky-mist-300: #aecbe8;
+  --color-sky-mist-400: #8bb2d9;
+  --color-sky-mist-500: #6c98c6;
+  --color-sky-mist-600: #4e739e;
+  --color-sky-mist-700: #3b5a7d;
+  --color-sky-mist-900: #263b54;
+
+  /* Robot Cyan — the mascot's glow. Primary interactive accent + code. */
+  --color-robot-cyan-50: #eafbfc;
+  --color-robot-cyan-100: #cdf3f6;
+  --color-robot-cyan-200: #9de7ec;
+  --color-robot-cyan-300: #6fdce3;
+  --color-robot-cyan-400: #38ccd6;
+  --color-robot-cyan-500: #1fbfcf;
+  --color-robot-cyan-600: #159eac;
+  --color-robot-cyan-700: #107c88;
+  --color-robot-cyan-800: #0d616b;
+  --color-robot-cyan-900: #0b4c54;
+  --color-robot-cyan-950: #073338;
+
+  /* Dawn Sand — the stone path. Warmth: XP, streak, secondary highlights. */
+  --color-dawn-sand-50: #fbf4e7;
+  --color-dawn-sand-100: #f5e6c4;
+  --color-dawn-sand-200: #f0d9a4;
+  --color-dawn-sand-300: #ebcb8c;
+  --color-dawn-sand-400: #e3b96c;
+  --color-dawn-sand-500: #d1a355;
+  --color-dawn-sand-600: #c99b48;
+  --color-dawn-sand-700: #9c7635;
+  --color-dawn-sand-800: #6f5527;
+  --color-dawn-sand-900: #5c4620;
+  --color-dawn-sand-950: #3d2f16;
+
+  /* Dusk Lavender — the mascot's antenna tip + misty peaks. Rare/special. */
+  --color-dusk-lavender-50: #f3f1fb;
+  --color-dusk-lavender-100: #e4e0f5;
+  --color-dusk-lavender-200: #cdc4ea;
+  --color-dusk-lavender-300: #b7abe3;
+  --color-dusk-lavender-400: #a094d4;
+  --color-dusk-lavender-500: #8b7fc7;
+  --color-dusk-lavender-600: #7267b3;
+  --color-dusk-lavender-700: #5f52a0;
+  --color-dusk-lavender-800: #473d78;
+  --color-dusk-lavender-900: #362d5e;
+  --color-dusk-lavender-950: #241d40;
+
+  /* Bloom Coral — the trailside flowers. Celebratory pops only (streaks). */
+  --color-bloom-coral-50: #fdeef1;
+  --color-bloom-coral-100: #fbd7de;
+  --color-bloom-coral-200: #f7bcc7;
+  --color-bloom-coral-300: #f3a8b7;
+  --color-bloom-coral-400: #f1919f;
+  --color-bloom-coral-500: #ef8199;
+  --color-bloom-coral-600: #d9647e;
+  --color-bloom-coral-700: #c24d68;
+  --color-bloom-coral-800: #5c1f2e;
+  --color-bloom-coral-900: #742639;
+  --color-bloom-coral-950: #4a1826;
+
+  /* Parchment — warm light-mode neutral (replaces slate-50/100/200). */
+  --color-parchment-50: #fbf9f3;
+  --color-parchment-100: #f4f0e4;
+  --color-parchment-200: #e9e2ce;
+  --color-parchment-300: #dcd3b7;
+  --color-parchment-400: #c9bfa0;
+  --color-parchment-500: #a99e83;
+  --color-parchment-600: #8f836a;
+  --color-parchment-700: #6c6250;
+
+  /* Pine — deep green-black dark-mode neutral (replaces slate-800/900/950). */
+  --color-pine-400: #6b8874;
+  --color-pine-500: #547a63;
+  --color-pine-600: #3a5443;
+  --color-pine-700: #2a4433;
+  --color-pine-800: #1f3226;
+  --color-pine-900: #16221b;
+  --color-pine-950: #0e1712;
 }
 
 :root {
-  --page-bg: #f6f7fb;
-  --page-fg: #0f172a;
+  --page-bg: var(--color-parchment-50);
+  --page-fg: var(--color-pine-900);
 }
 
 html.dark {
-  --page-bg: #080d18;
-  --page-fg: #e2e8f0;
+  --page-bg: var(--color-pine-950);
+  --page-fg: var(--color-parchment-100);
   color-scheme: dark;
 }
 
@@ -29,10 +132,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   font-family: var(--font-sans);
-  background:
-    radial-gradient(circle at 80% -10%, rgb(139 92 246 / 0.06), transparent 30rem),
-    radial-gradient(circle at 20% 0%, rgb(14 165 233 / 0.05), transparent 28rem),
-    var(--page-bg);
+  background: var(--page-bg);
   color: var(--page-fg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -44,12 +144,18 @@ input {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Display type for headings, hero copy, and level-up moments — everything
+   else (body copy, UI labels) stays on the base sans for legibility. */
+.font-display {
+  font-family: var(--font-display);
+}
+
 button:not(:disabled) {
   cursor: pointer;
 }
 
 ::selection {
-  background: rgb(139 92 246 / 0.2);
+  background: rgb(31 191 207 / 0.25);
 }
 
 @keyframes pop-in {
@@ -73,7 +179,7 @@ button:not(:disabled) {
 
 .map-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgb(148 163 184 / 0.45) transparent;
+  scrollbar-color: rgb(76 122 82 / 0.4) transparent;
 }
 
 .map-scrollbar::-webkit-scrollbar {
@@ -86,7 +192,7 @@ button:not(:disabled) {
 
 .map-scrollbar::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgb(148 163 184 / 0.4);
+  background: rgb(76 122 82 / 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {

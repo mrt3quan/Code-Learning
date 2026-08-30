@@ -15,9 +15,9 @@ const CHALLENGE_LABEL: Record<ChallengeType, string> = {
 };
 
 const CHALLENGE_COLOR: Record<ChallengeType, string> = {
-  'predict-output': 'bg-violet-100 text-violet-700 dark:bg-violet-400/10 dark:text-violet-300',
-  'fill-in-blank': 'bg-sky-100 text-sky-700 dark:bg-sky-400/10 dark:text-sky-300',
-  'fix-the-bug': 'bg-rose-100 text-rose-700 dark:bg-rose-400/10 dark:text-rose-300',
+  'predict-output': 'bg-robot-cyan-100 text-robot-cyan-700 dark:bg-robot-cyan-400/10 dark:text-robot-cyan-300',
+  'fill-in-blank': 'bg-dawn-sand-100 text-dawn-sand-700 dark:bg-dawn-sand-400/10 dark:text-dawn-sand-300',
+  'fix-the-bug': 'bg-dusk-lavender-100 text-dusk-lavender-700 dark:bg-dusk-lavender-400/10 dark:text-dusk-lavender-300',
 };
 
 export default function ChallengesScreen({
@@ -33,8 +33,8 @@ export default function ChallengesScreen({
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">Challenges</h1>
-      <p className="mt-1 text-slate-500 dark:text-slate-400">
+      <h1 className="font-display text-2xl font-bold text-pine-900 dark:text-parchment-50">Challenges</h1>
+      <p className="mt-1 text-moss-700/80 dark:text-parchment-400">
         Every challenge you've unlocked so far — jump back in to practice any of them.
       </p>
 
@@ -46,25 +46,25 @@ export default function ChallengesScreen({
               <button
                 type="button"
                 onClick={() => onSelectLesson(lesson.id)}
-                className="flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm transition hover:border-violet-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:hover:border-violet-500"
+                className="flex w-full items-center gap-4 rounded-2xl border border-parchment-200 bg-parchment-50 px-5 py-4 text-left shadow-sm transition hover:border-moss-300 hover:shadow-md dark:border-pine-700 dark:bg-pine-900 dark:hover:border-moss-600"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-parchment-100 dark:bg-pine-800">
                   <TrackIcon language={track.language} size={22} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    <span className="font-semibold text-pine-900 dark:text-parchment-100">
                       {lesson.title}
                     </span>
                     {completed && (
                       <CheckCircle2
                         size={16}
-                        className="text-emerald-600 dark:text-emerald-400"
+                        className="text-moss-600 dark:text-moss-400"
                         aria-label="Completed"
                       />
                     )}
                   </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400">{track.title}</div>
+                  <div className="text-xs text-moss-700/80 dark:text-parchment-400">{track.title}</div>
                 </div>
                 <span
                   className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${CHALLENGE_COLOR[lesson.challenge.type]}`}
@@ -78,7 +78,7 @@ export default function ChallengesScreen({
       </ul>
 
       {entries.length === 0 && (
-        <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-6 text-sm text-moss-700/80 dark:text-parchment-400">
           Complete your first lesson to unlock challenges here.
         </p>
       )}

@@ -70,7 +70,7 @@ export default function App() {
           />
           <button
             type="button"
-            className="flex-1 bg-slate-950/55 backdrop-blur-[2px]"
+            className="flex-1 bg-pine-950/55 backdrop-blur-[2px]"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu overlay"
           />

@@ -4,9 +4,9 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
+  Compass,
   Lightbulb,
   PlayCircle,
-  Sparkles,
   Swords,
   Target,
 } from 'lucide-react';
@@ -15,6 +15,7 @@ import { usePyodide } from '../hooks/usePyodide';
 import { useTutorHint } from '../hooks/useTutorHint';
 import CodeBlock from './CodeBlock';
 import { Mascot } from './Mascot';
+import bgFloatingIslands from '../assets/bg-floating-islands.png';
 
 interface LessonScreenProps {
   lesson: Lesson;
@@ -138,21 +139,30 @@ export default function LessonScreen({
       <button
         type="button"
         onClick={onBack}
-        className="mb-4 inline-flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        className="mb-4 inline-flex items-center gap-2 rounded-xl px-2 py-1.5 text-sm font-semibold text-moss-700 transition hover:bg-parchment-100 hover:text-moss-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-robot-cyan-500 dark:text-parchment-400 dark:hover:bg-pine-800 dark:hover:text-parchment-100"
       >
         <ArrowLeft size={16} /> Back to lessons
       </button>
 
-      <header className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-sky-600 px-5 py-5 text-white sm:px-7 sm:py-6">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <header className="overflow-hidden rounded-[26px] border border-moss-200 bg-parchment-50 shadow-sm dark:border-moss-800/50 dark:bg-pine-900">
+        <div className="relative overflow-hidden px-5 py-5 sm:px-7 sm:py-6">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-cover bg-[center_65%]"
+            style={{ backgroundImage: `url(${bgFloatingIslands})` }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-moss-900/88 via-moss-900/75 to-moss-900/45 dark:from-pine-950/92 dark:via-pine-950/82 dark:to-pine-950/55"
+          />
+          <div className="relative flex flex-col justify-between gap-4 text-white sm:flex-row sm:items-end">
             <div>
-              <div className="text-xs font-bold uppercase tracking-[0.16em] text-violet-100">
+              <div className="text-xs font-bold uppercase tracking-[0.16em] text-dawn-sand-200">
                 {trackTitle} · Lesson {lesson.order} of {totalLessons}
               </div>
-              <h1 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">{lesson.title}</h1>
+              <h1 className="font-display mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{lesson.title}</h1>
               <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold backdrop-blur">
-                <Sparkles size={13} /> +{lesson.xpReward} XP
+                <Compass size={13} /> +{lesson.xpReward} XP
               </div>
             </div>
             <div className="w-full sm:w-56">
@@ -161,7 +171,7 @@ export default function LessonScreen({
                 <span>{progressPct}%</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white/20">
-                <div className="h-full rounded-full bg-white" style={{ width: `${progressPct}%` }} />
+                <div className="h-full rounded-full bg-dawn-sand-300" style={{ width: `${progressPct}%` }} />
               </div>
             </div>
           </div>
@@ -181,7 +191,7 @@ export default function LessonScreen({
               key={section.id}
               type="button"
               onClick={() => scrollToSection(section.id)}
-              className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-600 transition hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-violet-600 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
+              className="flex shrink-0 items-center gap-1.5 rounded-xl border border-dawn-sand-300/70 bg-parchment-100 px-3 py-2 text-xs font-bold text-moss-800 transition hover:border-moss-400 hover:bg-moss-50 hover:text-moss-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-robot-cyan-500 dark:border-dawn-sand-800/50 dark:bg-pine-800 dark:text-parchment-300 dark:hover:border-moss-600 dark:hover:bg-moss-500/10 dark:hover:text-moss-300"
             >
               <section.Icon size={14} />
               {section.label}
@@ -194,40 +204,40 @@ export default function LessonScreen({
         <div className="min-w-0 space-y-6">
           <section
             id="section-explain"
-            className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6"
+            className="scroll-mt-24 rounded-2xl border border-parchment-200 bg-parchment-50 p-5 shadow-sm dark:border-pine-800 dark:bg-pine-900 sm:p-6"
           >
             <div className="mb-4 flex items-center justify-between gap-4">
               <div>
-                <div className="text-xs font-bold uppercase tracking-[0.14em] text-violet-600 dark:text-violet-400">Step 1</div>
-                <h2 className="mt-1 text-lg font-black text-slate-950 dark:text-white">Understand the idea</h2>
+                <div className="text-xs font-bold uppercase tracking-[0.14em] text-moss-600 dark:text-moss-400">Step 1</div>
+                <h2 className="font-display mt-1 text-lg font-bold text-pine-900 dark:text-parchment-50">Understand the idea</h2>
               </div>
-              <div className="hidden h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-violet-100 to-cyan-100 dark:from-violet-500/15 dark:to-cyan-500/15 sm:flex">
+              <div className="hidden h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-moss-100 to-robot-cyan-100 dark:from-moss-800/40 dark:to-robot-cyan-900/30 sm:flex">
                 <Mascot size={50} variant="head" />
               </div>
             </div>
-            <p className="text-[15px] leading-7 text-slate-700 dark:text-slate-300">{lesson.explanation}</p>
+            <p className="text-[15px] leading-7 text-pine-800/90 dark:text-parchment-300">{lesson.explanation}</p>
           </section>
 
           <section
             id="section-example"
-            className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6"
+            className="scroll-mt-24 rounded-2xl border border-parchment-200 bg-parchment-50 p-5 shadow-sm dark:border-pine-800 dark:bg-pine-900 sm:p-6"
           >
             <div className="mb-4">
-              <div className="text-xs font-bold uppercase tracking-[0.14em] text-sky-600 dark:text-sky-400">Step 2</div>
-              <h2 className="mt-1 text-lg font-black text-slate-950 dark:text-white">See it run</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Read the code first, then compare it with the output.</p>
+              <div className="text-xs font-bold uppercase tracking-[0.14em] text-robot-cyan-600 dark:text-robot-cyan-400">Step 2</div>
+              <h2 className="font-display mt-1 text-lg font-bold text-pine-900 dark:text-parchment-50">See it run</h2>
+              <p className="mt-1 text-sm text-moss-700/80 dark:text-parchment-400">Read the code first, then compare it with the output.</p>
             </div>
 
             <CodeBlock code={lesson.example.code} language={language} />
 
-            <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-              <div className="flex items-center justify-between bg-slate-50 px-4 py-2 dark:bg-slate-800">
-                <span className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Output</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${status === 'ready' && liveOutput !== null ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300' : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-300'}`}>
+            <div className="mt-3 overflow-hidden rounded-xl border border-parchment-200 dark:border-pine-700">
+              <div className="flex items-center justify-between bg-parchment-100 px-4 py-2 dark:bg-pine-800">
+                <span className="text-xs font-bold uppercase tracking-wide text-moss-700 dark:text-parchment-400">Output</span>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${status === 'ready' && liveOutput !== null ? 'bg-moss-100 text-moss-700 dark:bg-moss-500/15 dark:text-moss-300' : 'bg-parchment-200 text-moss-700 dark:bg-pine-700 dark:text-parchment-300'}`}>
                   {status === 'ready' && liveOutput !== null ? 'Live Python' : 'Example output'}
                 </span>
               </div>
-              <pre className="bg-white px-4 py-3 font-mono text-sm whitespace-pre-wrap text-slate-800 dark:bg-slate-950 dark:text-slate-100">{displayedOutput}</pre>
+              <pre className="bg-parchment-50 px-4 py-3 font-mono text-sm whitespace-pre-wrap text-pine-800 dark:bg-pine-950 dark:text-parchment-100">{displayedOutput}</pre>
             </div>
           </section>
 
@@ -235,26 +245,26 @@ export default function LessonScreen({
             id="section-challenge"
             className={`scroll-mt-24 rounded-2xl border p-5 shadow-sm sm:p-6 ${
               isBossChallenge
-                ? 'border-violet-300 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 dark:border-violet-700 dark:from-violet-950/60 dark:via-slate-900 dark:to-fuchsia-950/40'
-                : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+                ? 'border-dusk-lavender-300 bg-gradient-to-br from-dusk-lavender-50 via-parchment-50 to-bloom-coral-50 dark:border-dusk-lavender-600 dark:from-dusk-lavender-900/70 dark:via-dusk-lavender-950/60 dark:to-bloom-coral-950/40'
+                : 'border-parchment-200 bg-parchment-50 dark:border-pine-800 dark:bg-pine-900'
             }`}
           >
             <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div className="flex items-start gap-3">
-                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${isBossChallenge ? 'bg-violet-600 text-white' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300'}`}>
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${isBossChallenge ? 'bg-dusk-lavender-600 text-white' : 'bg-dawn-sand-100 text-dawn-sand-700 dark:bg-dawn-sand-500/10 dark:text-dawn-sand-300'}`}>
                   {isBossChallenge ? <Swords size={22} /> : <Target size={21} />}
                 </div>
                 <div>
-                  <div className={`text-xs font-bold uppercase tracking-[0.14em] ${isBossChallenge ? 'text-violet-600 dark:text-violet-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                  <div className={`text-xs font-bold uppercase tracking-[0.14em] ${isBossChallenge ? 'text-dusk-lavender-600 dark:text-dusk-lavender-400' : 'text-dawn-sand-700 dark:text-dawn-sand-400'}`}>
                     Step 3 · {isBossChallenge ? 'Boss Challenge' : 'Practice'}
                   </div>
-                  <h2 className="mt-1 text-lg font-black text-slate-950 dark:text-white">{CHALLENGE_LABEL[lesson.challenge.type]}</h2>
+                  <h2 className="font-display mt-1 text-lg font-bold text-pine-900 dark:text-parchment-50">{CHALLENGE_LABEL[lesson.challenge.type]}</h2>
                 </div>
               </div>
-              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-black text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">+{lesson.xpReward} XP</span>
+              <span className="rounded-full bg-dawn-sand-100 px-2.5 py-1 text-xs font-black text-dawn-sand-800 dark:bg-dawn-sand-500/10 dark:text-dawn-sand-300">+{lesson.xpReward} XP</span>
             </div>
 
-            <p className="mb-3 text-sm font-semibold leading-6 text-slate-700 dark:text-slate-300">{lesson.challenge.prompt}</p>
+            <p className="mb-3 text-sm font-semibold leading-6 text-pine-800/90 dark:text-parchment-300">{lesson.challenge.prompt}</p>
             <CodeBlock code={lesson.challenge.code} language={language} />
 
             <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
@@ -266,13 +276,13 @@ export default function LessonScreen({
                 onChange={(e) => setAnswer(e.target.value)}
                 disabled={feedback === 'correct'}
                 placeholder={CHALLENGE_PLACEHOLDER[lesson.challenge.type]}
-                className="min-h-11 flex-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-inner outline-none transition placeholder:text-slate-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/15 disabled:bg-slate-50 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100 dark:disabled:bg-slate-900"
+                className="min-h-11 flex-1 rounded-xl border border-parchment-300 bg-parchment-50 px-3.5 py-2.5 text-sm text-pine-900 shadow-inner outline-none transition placeholder:text-moss-600/50 focus:border-robot-cyan-500 focus:ring-2 focus:ring-robot-cyan-500/15 disabled:bg-parchment-100 dark:border-pine-700 dark:bg-pine-950 dark:text-parchment-100 dark:disabled:bg-pine-900"
               />
               {feedback !== 'correct' && (
                 <button
                   type="submit"
                   disabled={answer.trim() === ''}
-                  className="min-h-11 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="min-h-11 rounded-xl bg-robot-cyan-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-robot-cyan-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-robot-cyan-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Check answer
                 </button>
@@ -280,15 +290,15 @@ export default function LessonScreen({
             </form>
 
             {feedback === 'correct' && (
-              <div className="animate-pop-in mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950/60">
-                <div className="flex flex-wrap items-center gap-2 font-bold text-emerald-700 dark:text-emerald-300">
+              <div className="animate-pop-in mt-4 rounded-2xl border border-moss-200 bg-moss-50 p-4 dark:border-moss-800 dark:bg-moss-950/40">
+                <div className="flex flex-wrap items-center gap-2 font-bold text-moss-700 dark:text-moss-300">
                   <CheckCircle2 size={20} />
                   <span>Correct!</span>
                   {justAwardedXp && (
-                    <span className="rounded-full bg-emerald-600 px-2.5 py-1 text-xs font-black text-white">+{lesson.xpReward} XP</span>
+                    <span className="rounded-full bg-moss-600 px-2.5 py-1 text-xs font-black text-white">+{lesson.xpReward} XP</span>
                   )}
                 </div>
-                <p className="mt-1.5 text-sm text-emerald-700/85 dark:text-emerald-300/80">
+                <p className="mt-1.5 text-sm text-moss-700/85 dark:text-moss-300/80">
                   {justAwardedXp
                     ? wrongAttempts === 0
                       ? 'Mastered on the first try. Nice work.'
@@ -298,7 +308,7 @@ export default function LessonScreen({
                 <button
                   type="button"
                   onClick={hasNextLesson ? onGoNext : onBack}
-                  className="mt-3 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700"
+                  className="mt-3 inline-flex items-center gap-2 rounded-xl bg-moss-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-moss-700"
                 >
                   {hasNextLesson ? 'Next lesson' : 'Back to your path'} <ArrowRight size={16} />
                 </button>
@@ -306,12 +316,12 @@ export default function LessonScreen({
             )}
 
             {feedback === 'incorrect' && (
-              <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/60">
-                <div className="flex items-center gap-2 font-bold text-amber-800 dark:text-amber-300">
+              <div className="mt-4 rounded-2xl border border-dawn-sand-200 bg-dawn-sand-50 p-4 dark:border-dawn-sand-800 dark:bg-dawn-sand-950/30">
+                <div className="flex items-center gap-2 font-bold text-dawn-sand-900 dark:text-dawn-sand-300">
                   <Lightbulb size={18} /> Not quite — use the explanation, then try again.
                 </div>
-                <p className="mt-2 text-sm leading-6 text-amber-900 dark:text-amber-200">{lesson.challenge.wrongAnswerExplanation}</p>
-                <div className="mt-2 rounded-xl bg-white/70 px-3 py-2 text-sm italic text-amber-800 dark:bg-slate-900/50 dark:text-amber-300">
+                <p className="mt-2 text-sm leading-6 text-dawn-sand-900/90 dark:text-dawn-sand-200">{lesson.challenge.wrongAnswerExplanation}</p>
+                <div className="mt-2 rounded-xl bg-parchment-50/80 px-3 py-2 text-sm italic text-dawn-sand-900 dark:bg-pine-900/50 dark:text-dawn-sand-300">
                   Hint: {lesson.challenge.hint}
                 </div>
 
@@ -319,7 +329,7 @@ export default function LessonScreen({
                   <button
                     type="button"
                     onClick={handleRetry}
-                    className="rounded-xl border border-amber-300 bg-white px-3.5 py-2 text-sm font-bold text-amber-800 transition hover:bg-amber-100 dark:border-amber-700 dark:bg-slate-900 dark:text-amber-300 dark:hover:bg-slate-800"
+                    className="rounded-xl border border-dawn-sand-300 bg-parchment-50 px-3.5 py-2 text-sm font-bold text-dawn-sand-800 transition hover:bg-dawn-sand-100 dark:border-dawn-sand-700 dark:bg-pine-900 dark:text-dawn-sand-300 dark:hover:bg-pine-800"
                   >
                     Try again
                   </button>
@@ -328,7 +338,7 @@ export default function LessonScreen({
                       type="button"
                       onClick={handleAskTutor}
                       disabled={tutor.status === 'loading'}
-                      className="rounded-xl border border-violet-300 bg-white px-3.5 py-2 text-sm font-bold text-violet-700 transition hover:bg-violet-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-violet-700 dark:bg-slate-900 dark:text-violet-300 dark:hover:bg-slate-800"
+                      className="rounded-xl border border-dusk-lavender-300 bg-parchment-50 px-3.5 py-2 text-sm font-bold text-dusk-lavender-700 transition hover:bg-dusk-lavender-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-dusk-lavender-700 dark:bg-pine-900 dark:text-dusk-lavender-300 dark:hover:bg-pine-800"
                     >
                       {tutor.status === 'loading' ? '🤖 Thinking…' : '🤖 Ask AI Tutor'}
                     </button>
@@ -336,13 +346,13 @@ export default function LessonScreen({
                 </div>
 
                 {tutor.status === 'unavailable' && (
-                  <p className="mt-2 text-xs text-amber-600 dark:text-amber-500">AI Tutor is unavailable right now. The built-in hint above still works.</p>
+                  <p className="mt-2 text-xs text-dawn-sand-700 dark:text-dawn-sand-500">AI Tutor is unavailable right now. The built-in hint above still works.</p>
                 )}
 
                 {tutor.status === 'ready' && tutor.hint && (
-                  <div className="animate-pop-in mt-3 rounded-xl border border-violet-200 bg-violet-50 p-3 dark:border-violet-800 dark:bg-violet-950/70">
-                    <div className="text-xs font-bold uppercase tracking-[0.14em] text-violet-500 dark:text-violet-400">🤖 AI Tutor</div>
-                    <p className="mt-1 text-sm leading-6 text-violet-900 dark:text-violet-200">{tutor.hint}</p>
+                  <div className="animate-pop-in mt-3 rounded-xl border border-dusk-lavender-200 bg-dusk-lavender-50 p-3 dark:border-dusk-lavender-800 dark:bg-dusk-lavender-950/40">
+                    <div className="text-xs font-bold uppercase tracking-[0.14em] text-dusk-lavender-600 dark:text-dusk-lavender-400">🤖 AI Tutor</div>
+                    <p className="mt-1 text-sm leading-6 text-dusk-lavender-900 dark:text-dusk-lavender-200">{tutor.hint}</p>
                   </div>
                 )}
               </div>
@@ -352,22 +362,22 @@ export default function LessonScreen({
 
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-3">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div className="rounded-2xl border border-parchment-200 bg-parchment-50 p-4 shadow-sm dark:border-pine-800 dark:bg-pine-900">
               <div className="flex justify-center">
-                <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-violet-100 to-cyan-100 dark:from-violet-500/15 dark:to-cyan-500/15">
+                <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-moss-100 to-robot-cyan-100 dark:from-moss-800/40 dark:to-robot-cyan-900/30">
                   <Mascot size={88} variant="head" />
                 </div>
               </div>
-              <div className="mt-3 text-center text-sm font-bold text-slate-900 dark:text-white">Learn in small steps</div>
-              <p className="mt-1 text-center text-xs leading-5 text-slate-500 dark:text-slate-400">Understand the concept first. Then use the challenge to prove it to yourself.</p>
+              <div className="font-display mt-3 text-center text-sm font-bold text-pine-900 dark:text-parchment-50">Learn in small steps</div>
+              <p className="mt-1 text-center text-xs leading-5 text-moss-700/80 dark:text-parchment-400">Understand the concept first. Then use the challenge to prove it to yourself.</p>
             </div>
 
-            <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4 dark:border-sky-800 dark:bg-sky-500/10">
-              <div className="text-xs font-bold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-300">Python runtime</div>
-              <div className="mt-2 text-sm font-bold text-slate-900 dark:text-white">
+            <div className="rounded-2xl border border-robot-cyan-200 bg-robot-cyan-50 p-4 dark:border-robot-cyan-800 dark:bg-robot-cyan-500/10">
+              <div className="text-xs font-bold uppercase tracking-[0.14em] text-robot-cyan-700 dark:text-robot-cyan-300">Python runtime</div>
+              <div className="font-display mt-2 text-sm font-bold text-pine-900 dark:text-parchment-50">
                 {status === 'ready' ? '✓ Ready in your browser' : status === 'loading' ? 'Loading Python…' : 'Using saved example output'}
               </div>
-              <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">Examples run with Pyodide when available. No local Python installation is required.</p>
+              <p className="mt-1 text-xs leading-5 text-robot-cyan-800/70 dark:text-robot-cyan-200/70">Examples run with Pyodide when available. No local Python installation is required.</p>
             </div>
           </div>
         </aside>

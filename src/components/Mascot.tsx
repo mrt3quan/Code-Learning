@@ -42,10 +42,10 @@ export function MascotTip({
     <div
       className={`flex items-center gap-3 ${layout === 'column' ? 'flex-col text-center' : ''} ${className}`}
     >
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-violet-100 dark:bg-violet-950">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-robot-cyan-100 dark:bg-robot-cyan-950">
         <Mascot size={variant === 'wave' ? 46 : 34} variant={variant} />
       </div>
-      <div className="rounded-2xl bg-violet-50 px-3 py-2 text-sm text-violet-800 dark:bg-violet-950 dark:text-violet-200">
+      <div className="rounded-2xl bg-robot-cyan-50 px-3 py-2 text-sm text-robot-cyan-800 dark:bg-robot-cyan-950 dark:text-robot-cyan-200">
         {message}
       </div>
     </div>

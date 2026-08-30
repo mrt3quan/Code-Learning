@@ -31,13 +31,13 @@ export default function MapScreen({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
       <div className="mb-6">
-        <div className="text-xs font-bold uppercase tracking-[0.16em] text-violet-600 dark:text-violet-400">
+        <div className="text-xs font-bold uppercase tracking-[0.16em] text-moss-700 dark:text-moss-400">
           Course map
         </div>
-        <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-950 dark:text-white">
+        <h1 className="font-display mt-1 text-2xl font-bold tracking-tight text-pine-900 dark:text-parchment-50">
           Your Python Journey
         </h1>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-moss-700/80 dark:text-parchment-400">
           Follow the route in order to unlock new lessons. Completed lessons stay open for review.
         </p>
       </div>
@@ -49,13 +49,13 @@ export default function MapScreen({
               key={t.id}
               type="button"
               onClick={() => setSelectedId(t.id)}
-              className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
+              className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-robot-cyan-500 ${
                 activeTrack?.id === t.id
-                  ? 'border-violet-600 bg-violet-600 text-white shadow-sm'
-                  : 'border-slate-200 bg-white text-slate-600 hover:border-violet-200 hover:bg-violet-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10'
+                  ? 'border-robot-cyan-600 bg-robot-cyan-600 text-white shadow-sm'
+                  : 'border-parchment-200 bg-parchment-50 text-moss-700 hover:border-moss-300 hover:bg-moss-50 dark:border-pine-800 dark:bg-pine-900 dark:text-parchment-300 dark:hover:border-moss-600 dark:hover:bg-moss-500/10'
               }`}
             >
-              <span className={`flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black ${activeTrack?.id === t.id ? 'bg-white/15' : 'bg-slate-100 dark:bg-slate-800'}`}>
+              <span className={`flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black ${activeTrack?.id === t.id ? 'bg-white/15' : 'bg-parchment-100 dark:bg-pine-800'}`}>
                 {index + 1}
               </span>
               <TrackIcon language={t.language} size={18} />

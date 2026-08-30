@@ -24,22 +24,22 @@ export default function LearningMapCard({
   const offsets = [18, 88, 38, 104, 30, 80];
 
   return (
-    <div className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 px-5 py-4 dark:border-slate-800">
+    <div className="overflow-hidden rounded-[26px] border border-parchment-200 bg-parchment-50 shadow-sm dark:border-pine-800 dark:bg-pine-900">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-parchment-200/80 px-5 py-4 dark:border-pine-800">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-cyan-100 dark:from-violet-500/15 dark:to-cyan-500/15">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-moss-100 to-robot-cyan-100 dark:from-moss-800/40 dark:to-robot-cyan-900/30">
             <TrackIcon language={track.language} size={34} />
           </div>
           <div>
-            <div className="font-bold text-slate-900 dark:text-white">{track.title}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400">{completedCount} of {track.lessons.length} lessons complete</div>
+            <div className="font-display font-bold text-pine-900 dark:text-parchment-50">{track.title}</div>
+            <div className="text-xs text-moss-700/80 dark:text-parchment-400">{completedCount} of {track.lessons.length} lessons complete</div>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
+          <span className="rounded-full bg-moss-50 px-2.5 py-1 text-xs font-bold text-moss-700 dark:bg-moss-500/10 dark:text-moss-300">
             {progressPct}% complete
           </span>
-          <span className="hidden text-xs text-slate-400 sm:inline">Scroll →</span>
+          <span className="hidden text-xs text-moss-600/70 dark:text-parchment-500 sm:inline">Scroll →</span>
         </div>
       </div>
 
@@ -51,8 +51,8 @@ export default function LearningMapCard({
             backgroundImage: `url(${bgFloatingIslands})`,
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/0 to-white/30 dark:from-slate-950/55 dark:via-slate-950/35 dark:to-slate-950/65" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/55 to-transparent dark:from-slate-950/45" />
+          <div className="absolute inset-0 bg-gradient-to-b from-parchment-50/30 via-parchment-50/0 to-parchment-50/30 dark:from-pine-950/55 dark:via-pine-950/35 dark:to-pine-950/65" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-parchment-50/55 to-transparent dark:from-pine-950/45" />
 
           <div className="relative flex h-full items-start gap-2 px-7 py-5">
             {track.lessons.map((lesson, index) => {
@@ -72,7 +72,7 @@ export default function LearningMapCard({
                   {index < track.lessons.length - 1 && (
                     <div
                       aria-hidden="true"
-                      className="pointer-events-none absolute left-[82px] top-[88px] h-0 w-[84px] border-t-[3px] border-dashed border-emerald-400/65 dark:border-emerald-300/30"
+                      className="pointer-events-none absolute left-[82px] top-[88px] h-0 w-[84px] border-t-[3px] border-dashed border-moss-500/65 dark:border-moss-300/30"
                       style={{
                         transform: `translateY(${offset - 18}px) rotate(${direction * 26}deg)`,
                         transformOrigin: 'left center',
@@ -85,17 +85,17 @@ export default function LearningMapCard({
                     disabled={!unlocked}
                     onClick={() => onSelectLesson(lesson.id)}
                     aria-label={`${lesson.title}${completed ? ', completed' : unlocked ? ', unlocked' : ', locked'}`}
-                    className={`group relative z-10 flex w-full flex-col items-center rounded-2xl px-2 py-2 text-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed ${
+                    className={`group relative z-10 flex w-full flex-col items-center rounded-2xl px-2 py-2 text-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-robot-cyan-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed ${
                       unlocked ? 'hover:-translate-y-1' : ''
                     }`}
                   >
                     <div
                       className={`relative flex h-16 w-16 items-center justify-center rounded-full border-4 text-lg font-black shadow-lg transition-all ${
                         completed
-                          ? 'border-white bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-emerald-900/20 dark:border-slate-800'
+                          ? 'border-parchment-50 bg-gradient-to-br from-moss-400 to-moss-600 text-white shadow-moss-900/20 dark:border-pine-800'
                           : unlocked
-                            ? 'border-white bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-violet-900/25 group-hover:shadow-xl dark:border-slate-800'
-                            : 'border-white/90 bg-slate-200 text-slate-400 shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-700 dark:text-slate-500'
+                            ? 'border-parchment-50 bg-gradient-to-br from-robot-cyan-500 to-moss-600 text-white shadow-robot-cyan-900/25 group-hover:shadow-xl dark:border-pine-800'
+                            : 'border-parchment-50/90 bg-parchment-200 text-parchment-500 shadow-pine-900/10 dark:border-pine-800 dark:bg-pine-700 dark:text-pine-400'
                       }`}
                     >
                       {completed ? (
@@ -107,7 +107,7 @@ export default function LearningMapCard({
                       )}
 
                       {isNext && (
-                        <span className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-amber-300 text-amber-900 shadow-md">
+                        <span className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-dawn-sand-300 text-dawn-sand-900 shadow-md">
                           <Sparkles size={14} className="fill-current" />
                         </span>
                       )}
@@ -115,18 +115,18 @@ export default function LearningMapCard({
 
                     <div className={`mt-2 rounded-xl border px-2.5 py-1.5 shadow-sm backdrop-blur-md ${
                       isNext
-                        ? 'border-violet-200 bg-white/95 dark:border-violet-700 dark:bg-slate-900/95'
-                        : 'border-white/70 bg-white/80 dark:border-slate-700 dark:bg-slate-900/80'
+                        ? 'border-robot-cyan-200 bg-parchment-50/95 dark:border-robot-cyan-700 dark:bg-pine-900/95'
+                        : 'border-parchment-50/70 bg-parchment-50/80 dark:border-pine-700 dark:bg-pine-900/80'
                     }`}>
-                      <div className="line-clamp-2 text-xs font-bold leading-4 text-slate-800 dark:text-slate-100">
+                      <div className="line-clamp-2 text-xs font-bold leading-4 text-pine-800 dark:text-parchment-100">
                         {lesson.title.replace(/^Project:\s*/, '')}
                       </div>
                       <div className={`mt-0.5 text-[10px] font-semibold ${
                         completed
-                          ? 'text-emerald-600 dark:text-emerald-400'
+                          ? 'text-moss-600 dark:text-moss-400'
                           : unlocked
-                            ? 'text-violet-600 dark:text-violet-400'
-                            : 'text-slate-400'
+                            ? 'text-robot-cyan-700 dark:text-robot-cyan-400'
+                            : 'text-parchment-500 dark:text-pine-500'
                       }`}>
                         {completed ? 'Completed' : unlocked ? `+${lesson.xpReward} XP` : 'Locked'}
                       </div>
