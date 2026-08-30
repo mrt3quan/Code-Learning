@@ -250,7 +250,7 @@ export const foundationsTrack: Track = {
 export const aiDeveloperTrack: Track = {
   id: 'ai-developer',
   title: 'AI Developer · Python',
-  subtitle: 'Combine data, files, and logic into your first real program.',
+  subtitle: 'Data structures, error handling, classes, and JSON — building toward real AI-flavored projects.',
   language: 'python',
   pathId: 'python',
   lessons: [
@@ -278,8 +278,97 @@ export const aiDeveloperTrack: Track = {
       xpReward: 10,
     },
     {
-      id: 'ai-files',
+      id: 'ai-comprehensions',
       order: 2,
+      title: 'List Comprehensions',
+      explanation:
+        "A list comprehension builds a new list in a single line by describing what to do with each item, instead of writing a full loop with .append(). The pattern is [expression for item in iterable], and adding an if at the end filters which items make it in. They show up constantly in code that processes data, since they read almost like the sentence they describe.",
+      example: {
+        code: 'numbers = [1, 2, 3, 4, 5]\ndoubled = [n * 2 for n in numbers]\nprint(doubled)',
+        output: '[2, 4, 6, 8, 10]',
+      },
+      challenge: {
+        type: 'predict-output',
+        code:
+          'scores = [55, 90, 40, 75, 30]\npassing = [s for s in scores if s >= 50]\nprint(len(passing))',
+        prompt: 'What does this print?',
+        correctAnswer: '3',
+        wrongAnswerExplanation:
+          "The comprehension keeps only scores where s >= 50 is True: 55, 90, and 75 qualify, while 40 and 30 don't. That leaves 3 items in passing, so len(passing) prints 3.",
+        hint: 'Count how many scores in the original list are 50 or higher.',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'ai-error-handling',
+      order: 3,
+      title: 'Error Handling',
+      explanation:
+        "Some errors are expected — a file might be missing, or input might not be a number — and a try/except block lets your program handle them instead of crashing. Python runs the try block first; the moment an error happens inside it, execution jumps straight to the matching except block.",
+      example: {
+        code: 'try:\n    number = int("abc")\nexcept ValueError:\n    print("That wasn\'t a number")',
+        output: "That wasn't a number",
+      },
+      challenge: {
+        type: 'fill-in-blank',
+        code:
+          'try:\n    result = 10 / 0\n____ ZeroDivisionError:\n    print("Can\'t divide by zero")',
+        prompt: 'Fill in the blank so this catches the error instead of crashing.',
+        correctAnswer: 'except',
+        wrongAnswerExplanation:
+          'try starts the block that might fail. To catch a specific error it can raise, you follow it with except <ErrorType>: — here, except ZeroDivisionError: catches the division error and runs the fallback print instead of crashing the program.',
+        hint: 'You already have try — what keyword pairs with it to catch the error?',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'ai-default-args',
+      order: 4,
+      title: 'Default Arguments',
+      explanation:
+        "A parameter can have a default value, given with = in the function definition. If the caller doesn't pass that argument, Python uses the default instead — this lets you add optional settings to a function without breaking every existing call to it.",
+      example: {
+        code:
+          'def greet(name, greeting="Hello"):\n    print(greeting + ", " + name)\n\ngreet("Ava")\ngreet("Leo", "Hey")',
+        output: 'Hello, Ava\nHey, Leo',
+      },
+      challenge: {
+        type: 'predict-output',
+        code: 'def power(base, exponent=2):\n    return base ** exponent\n\nprint(power(3))',
+        prompt: 'What does this print?',
+        correctAnswer: '9',
+        wrongAnswerExplanation:
+          'power(3) only passes one argument, so exponent falls back to its default value of 2. That computes base ** exponent as 3 ** 2, which is 9.',
+        hint: "Since the second argument isn't given, the function falls back to its default value.",
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'ai-classes',
+      order: 5,
+      title: 'Classes & Objects',
+      explanation:
+        'A class is a blueprint for creating objects that bundle data and behavior together. Fields are set inside __init__, which runs automatically when you create an object, and methods are functions defined inside the class body. Every method\'s first parameter is self, which refers to the specific object it was called on.',
+      example: {
+        code:
+          'class Dog:\n    def __init__(self, name):\n        self.name = name\n\n    def bark(self):\n        print(self.name + " says woof!")\n\nrex = Dog("Rex")\nrex.bark()',
+        output: 'Rex says woof!',
+      },
+      challenge: {
+        type: 'fill-in-blank',
+        code:
+          'class Counter:\n    def __init__(self):\n        self.count = 0\n\n    def increment(self):\n        self.____ += 1\n\nc = Counter()\nc.increment()\nc.increment()\nprint(c.count)',
+        prompt: "Fill in the blank so increment() actually updates the object's count.",
+        correctAnswer: 'count',
+        wrongAnswerExplanation:
+          "self.count is the object's own count field, set to 0 in __init__. self.count += 1 increases that specific object's count — using just count without self would refer to a variable that doesn't exist inside the method.",
+        hint: "You're updating the same field that __init__ set on self.",
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'ai-files',
+      order: 6,
       title: 'Files',
       explanation:
         'Python can read and write text files with open(). Opening a file in "w" mode creates it (or overwrites it) for writing; opening it in "r" mode reads what\'s there. A with block closes the file for you automatically once you\'re done with it.',
@@ -301,8 +390,51 @@ export const aiDeveloperTrack: Track = {
       xpReward: 10,
     },
     {
+      id: 'ai-json',
+      order: 7,
+      title: 'Working with JSON',
+      explanation:
+        "JSON is a text format for structured data that maps directly onto Python dictionaries and lists — it's how most web APIs and AI services send data back and forth. Python's json module converts between the two: json.loads() parses JSON text into a dict, and json.dumps() turns a dict back into JSON text.",
+      example: {
+        code: 'import json\n\ntext = \'{"name": "Ava", "score": 90}\'\ndata = json.loads(text)\nprint(data["name"])',
+        output: 'Ava',
+      },
+      challenge: {
+        type: 'predict-output',
+        code:
+          'import json\n\ntext = \'{"item": "sword", "price": 25}\'\ndata = json.loads(text)\ndata["price"] += 5\nprint(data["price"])',
+        prompt: 'What does this print?',
+        correctAnswer: '30',
+        wrongAnswerExplanation:
+          'json.loads() turns the JSON text into a regular Python dictionary, so data["price"] starts out as 25. data["price"] += 5 works exactly like any dictionary value update, giving 30.',
+        hint: 'Once parsed, data is just a normal dictionary — treat data["price"] like any other dict value.',
+      },
+      xpReward: 10,
+    },
+    {
+      id: 'ai-modules',
+      order: 8,
+      title: 'Modules & Imports',
+      explanation:
+        "A module is a file of Python code you can reuse with import, including modules built into Python itself. import math gives you access to everything inside it through dot notation, like math.sqrt(). You can also import just one name with from module import name, so you can call it directly without the module prefix.",
+      example: {
+        code: 'import math\n\nprint(math.sqrt(16))',
+        output: '4.0',
+      },
+      challenge: {
+        type: 'predict-output',
+        code: 'from math import floor\n\nprice = 19.99\nprint(floor(price))',
+        prompt: 'What does this print?',
+        correctAnswer: '19',
+        wrongAnswerExplanation:
+          "from math import floor imports floor directly, so it's called as floor(price) instead of math.floor(price). floor() always rounds down to the nearest whole number, and 19.99 rounds down to 19.",
+        hint: "floor() always rounds down, no matter how close the decimal is to the next whole number.",
+      },
+      xpReward: 10,
+    },
+    {
       id: 'ai-project-quiz',
-      order: 3,
+      order: 9,
       title: 'Project: Quiz Game',
       explanation:
         'A small project pulls together everything so far: variables to keep score, a loop to check each answer, and a condition to compare a guess against the right one. Here\'s the core of a tiny quiz game that grades itself.',
@@ -321,6 +453,31 @@ export const aiDeveloperTrack: Track = {
         wrongAnswerExplanation:
           "A single = assigns a value, and Python doesn't allow that inside an if condition. Comparing two values for equality needs ==, so the line should read if guess == answers[i]:.",
         hint: 'Assignment and comparison look almost identical but use a different number of equals signs.',
+      },
+      xpReward: 25,
+      isProject: true,
+    },
+    {
+      id: 'ai-project-chatbot',
+      order: 10,
+      title: 'Project: Rule-Based Chatbot',
+      explanation:
+        "A simple rule-based \"chatbot\" just matches keywords in the user's message to a canned response — no real intelligence, but it's the same pattern real dialogue systems build on: check the input, find a matching rule, respond. Here a function loops over a dictionary of keyword-to-reply pairs and returns the first one it finds inside the message.",
+      example: {
+        code:
+          'responses = {\n    "hello": "Hi there!",\n    "bye": "See you later!",\n}\n\ndef chatbot_reply(message):\n    for keyword in responses:\n        if keyword in message.lower():\n            return responses[keyword]\n    return "I don\'t understand."\n\nprint(chatbot_reply("hello there"))',
+        output: 'Hi there!',
+      },
+      challenge: {
+        type: 'fix-the-bug',
+        code:
+          'responses = {\n    "help": "How can I assist you?",\n    "thanks": "You\'re welcome!",\n}\n\ndef chatbot_reply(message):\n    for keyword in responses:\n        if keyword in message:\n            return responses[keyword]\n    return "I don\'t understand."\n\nprint(chatbot_reply("Thanks a lot!"))',
+        prompt:
+          'This prints "I don\'t understand." instead of matching "thanks". What should message become inside the if check so it matches regardless of capitalization?',
+        correctAnswer: 'message.lower()',
+        wrongAnswerExplanation:
+          'The dictionary key is the lowercase "thanks", but the message is "Thanks a lot!" with a capital T, so "thanks" in message is False. Calling message.lower() first turns it into "thanks a lot!", which does contain "thanks".',
+        hint: 'The keyword is lowercase, but the message might not be — what string method fixes that mismatch?',
       },
       xpReward: 25,
       isProject: true,
@@ -567,7 +724,7 @@ export const pathOptions: PathOption[] = [
     title: 'Game Developer',
     language: 'C++',
     description: 'Build games with high-performance C++.',
-    available: true,
+    available: false,
   },
   {
     id: 'python',

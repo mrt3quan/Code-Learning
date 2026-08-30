@@ -1,9 +1,11 @@
 # CodeQuest
 
 A gamified, browser-based coding app: a shared "Programming Foundations"
-track (Python), then a choice between an "AI Developer" (Python) or "Game
-Developer" (C++) specialization — with a full dashboard/sidebar app shell,
-achievements, mastery tracking, and an optional AI tutor.
+track (Python), then an "AI Developer" (Python) specialization — with a
+full dashboard/sidebar app shell, achievements, mastery tracking, and an
+optional AI tutor. A "Game Developer" (C++) specialization exists in the
+data but is postponed — its path card shows "Coming soon" while its
+design gets more attention.
 
 ## What's here
 
@@ -35,13 +37,18 @@ achievements, mastery tracking, and an optional AI tutor.
   / Challenge) and, for Fix-the-Bug challenges, a "Boss Challenge" visual
   treatment. Three challenge types: Predict-the-Output, Fill-in-the-Blank,
   and Fix-the-Bug.
-- **Two specializations after Foundations**: AI Developer (Python — Lists &
-  Dictionaries, Files, a Quiz Game project) and Game Developer (C++ —
-  Variables & Types through References, ending in a Health Bar project).
-  Both are real content. C++ has no in-browser compiler (that's a genuinely
-  separate, much larger project), so its examples show correct, hand-verified
-  output rather than a live-executed one — same fallback mode Python uses
-  when Pyodide can't load.
+- **AI Developer (Python) specialization after Foundations** — 10 lessons:
+  Lists & Dictionaries, List Comprehensions, Error Handling, Default
+  Arguments, Classes & Objects, Files, Working with JSON, Modules &
+  Imports, and two capstone projects (a Quiz Game, then a Rule-Based
+  Chatbot that ties dictionaries/functions/strings together into a toy
+  "AI" pattern-matcher). Game Developer (C++ — Variables & Types through
+  References, ending in a Health Bar project) has real lesson content
+  too, but is postponed: its path card is disabled ("Coming soon") until
+  it gets its own design pass. C++ has no in-browser compiler (a
+  genuinely separate, much larger project), so its examples show correct,
+  hand-verified output rather than a live-executed one — the same
+  fallback mode Python uses when Pyodide can't load.
 - An on-demand AI Tutor: after a wrong answer, an "Ask AI Tutor" button
   calls a small backend that asks Claude for a hint. Hints escalate across
   attempts — a gentle nudge on the first miss, a more specific pointer on
