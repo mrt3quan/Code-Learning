@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle2, CircleDot, Compass, LockKeyhole, MapPin } from 'lucide-react';
-import type { Track } from '../data/lessons';
+import { getExplanationActivity, type Track } from '../data/lessons';
 import { achievements } from '../data/achievements';
 import { Mascot } from './Mascot';
 import TrackIcon from './TrackIcon';
@@ -168,7 +168,7 @@ export default function DashboardScreen({
                 <div className="rounded-xl bg-parchment-100 p-3.5 dark:bg-pine-800/70">
                   <div className="text-sm font-bold text-pine-900 dark:text-parchment-50">{nextLesson.title}</div>
                   <p className="mt-1 line-clamp-3 text-xs leading-5 text-moss-700/90 dark:text-parchment-400">
-                    {nextLesson.explanation}
+                    {getExplanationActivity(nextLesson)?.text}
                   </p>
                 </div>
                 <button

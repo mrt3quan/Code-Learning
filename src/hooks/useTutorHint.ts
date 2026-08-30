@@ -6,7 +6,10 @@ export interface TutorHintRequest {
   challengeCode: string;
   challengePrompt: string;
   correctAnswer: string;
-  staticHint: string;
+  // Ordered gentlest-to-most-revealing — the same array the static hint
+  // ladder draws from, so the tutor and static hints stay grounded in one
+  // source instead of two separate hint tracks.
+  staticHints: [string, string, string];
   staticExplanation: string;
   userAnswer: string;
   wrongAttempts: number;

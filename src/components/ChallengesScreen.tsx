@@ -1,5 +1,5 @@
 import { CheckCircle2 } from 'lucide-react';
-import { tracks, type ChallengeType } from '../data/lessons';
+import { getPrimaryChallenge, tracks, type ChallengeType } from '../data/lessons';
 import TrackIcon from './TrackIcon';
 
 interface ChallengesScreenProps {
@@ -41,6 +41,7 @@ export default function ChallengesScreen({
       <ul className="mt-6 flex flex-col gap-3">
         {entries.map(({ track, lesson }) => {
           const completed = isLessonCompleted(lesson.id);
+          const challenge = getPrimaryChallenge(lesson);
           return (
             <li key={lesson.id}>
               <button
@@ -66,11 +67,13 @@ export default function ChallengesScreen({
                   </div>
                   <div className="text-xs text-moss-700/80 dark:text-parchment-400">{track.title}</div>
                 </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${CHALLENGE_COLOR[lesson.challenge.type]}`}
-                >
-                  {CHALLENGE_LABEL[lesson.challenge.type]}
-                </span>
+                {challenge && (
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${CHALLENGE_COLOR[challenge.type]}`}
+                  >
+                    {CHALLENGE_LABEL[challenge.type]}
+                  </span>
+                )}
               </button>
             </li>
           );

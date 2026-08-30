@@ -10,7 +10,7 @@ interface TutorHintRequest {
   challengeCode: string;
   challengePrompt: string;
   correctAnswer: string;
-  staticHint: string;
+  staticHints: [string, string, string];
   staticExplanation: string;
   userAnswer: string;
   wrongAttempts: number;
@@ -99,7 +99,10 @@ Challenge code:
 ${body.challengeCode}
 Challenge prompt: ${body.challengePrompt}
 Correct answer: ${body.correctAnswer}
-Reference hint: ${body.staticHint}
+Reference hints (gentlest to most revealing):
+1) ${body.staticHints[0]}
+2) ${body.staticHints[1]}
+3) ${body.staticHints[2]}
 Reference explanation: ${body.staticExplanation}
 Learner's incorrect answer: ${body.userAnswer}
 

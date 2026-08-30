@@ -6,11 +6,18 @@ import {
   CheckCircle2,
   Compass,
   Lightbulb,
+  ListChecks,
   PlayCircle,
   Swords,
   Target,
 } from 'lucide-react';
-import type { ChallengeType, Language, Lesson } from '../data/lessons';
+import {
+  getExplanationActivity,
+  getPrimaryChallenge,
+  type ChallengeType,
+  type Language,
+  type Lesson,
+} from '../data/lessons';
 import { usePyodide } from '../hooks/usePyodide';
 import { useTutorHint } from '../hooks/useTutorHint';
 import CodeBlock from './CodeBlock';
@@ -70,10 +77,26 @@ export default function LessonScreen({
   const [justAwardedXp, setJustAwardedXp] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState(0);
 
+  // Every authored lesson has exactly one explanation and one challenge
+  // activity in Phase A — Phase B may add more challenge activities per
+  // lesson, but every lesson always starts with its concept explanation.
+  const explanationActivity = getExplanationActivity(lesson)!;
+  const challenge = getPrimaryChallenge(lesson)!;
+  const challengeIndex = lesson.activities.findIndex((a) => a.type !== 'explanation');
+
+  // Explanation activities are visible (and so "done") the moment the lesson
+  // loads; a challenge activity is "done" once solved. A review of an
+  // already-completed lesson starts with the challenge marked done too.
+  const [completedActivityIndices, setCompletedActivityIndices] = useState<Set<number>>(() => {
+    const indices = lesson.activities.flatMap((a, i) => (a.type === 'explanation' ? [i] : []));
+    if (alreadyCompleted && challengeIndex !== -1) indices.push(challengeIndex);
+    return new Set(indices);
+  });
+
   useEffect(() => {
     let cancelled = false;
     if (language === 'python' && status === 'ready') {
-      runPython(lesson.example.code)
+      runPython(explanationActivity.example.code)
         .then((out) => {
           if (!cancelled) setLiveOutput(out);
         })
@@ -84,22 +107,24 @@ export default function LessonScreen({
     return () => {
       cancelled = true;
     };
-  }, [language, status, lesson.example.code, runPython]);
+  }, [language, status, explanationActivity.example.code, runPython]);
 
-  const displayedOutput = liveOutput ?? lesson.example.output;
+  const displayedOutput = liveOutput ?? explanationActivity.example.output;
   const progressPct = Math.round((lesson.order / totalLessons) * 100);
-  const isBossChallenge = lesson.challenge.type === 'fix-the-bug';
+  const isBossChallenge = challenge.type === 'fix-the-bug';
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (feedback === 'correct') return;
 
-    const normalize =
-      lesson.challenge.type === 'predict-output' ? normalizeOutput : normalizeCode;
-    const isCorrect = normalize(answer) === normalize(lesson.challenge.correctAnswer);
+    const normalize = challenge.type === 'predict-output' ? normalizeOutput : normalizeCode;
+    const isCorrect = normalize(answer) === normalize(challenge.correctAnswer);
 
     if (isCorrect) {
       setFeedback('correct');
+      setCompletedActivityIndices((prev) =>
+        prev.has(challengeIndex) ? prev : new Set(prev).add(challengeIndex),
+      );
       if (!alreadyCompleted) {
         onComplete(wrongAttempts);
         setJustAwardedXp(true);
@@ -119,12 +144,12 @@ export default function LessonScreen({
   function handleAskTutor() {
     tutor.askTutor({
       lessonTitle: lesson.title,
-      explanation: lesson.explanation,
-      challengeCode: lesson.challenge.code,
-      challengePrompt: lesson.challenge.prompt,
-      correctAnswer: lesson.challenge.correctAnswer,
-      staticHint: lesson.challenge.hint,
-      staticExplanation: lesson.challenge.wrongAnswerExplanation,
+      explanation: explanationActivity.text,
+      challengeCode: challenge.code,
+      challengePrompt: challenge.prompt,
+      correctAnswer: challenge.correctAnswer,
+      staticHints: challenge.hints,
+      staticExplanation: challenge.wrongAnswerExplanation,
       userAnswer: answer,
       wrongAttempts,
     });
@@ -161,8 +186,13 @@ export default function LessonScreen({
                 {trackTitle} · Lesson {lesson.order} of {totalLessons}
               </div>
               <h1 className="font-display mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{lesson.title}</h1>
-              <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold backdrop-blur">
-                <Compass size={13} /> +{lesson.xpReward} XP
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold backdrop-blur">
+                  <Compass size={13} /> +{lesson.xpReward} XP
+                </div>
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold backdrop-blur">
+                  <ListChecks size={13} /> {completedActivityIndices.size} / {lesson.activities.length} activities
+                </div>
               </div>
             </div>
             <div className="w-full sm:w-56">
@@ -215,7 +245,7 @@ export default function LessonScreen({
                 <Mascot size={50} variant="head" />
               </div>
             </div>
-            <p className="text-[15px] leading-7 text-pine-800/90 dark:text-parchment-300">{lesson.explanation}</p>
+            <p className="text-[15px] leading-7 text-pine-800/90 dark:text-parchment-300">{explanationActivity.text}</p>
           </section>
 
           <section
@@ -228,7 +258,7 @@ export default function LessonScreen({
               <p className="mt-1 text-sm text-moss-700/80 dark:text-parchment-400">Read the code first, then compare it with the output.</p>
             </div>
 
-            <CodeBlock code={lesson.example.code} language={language} />
+            <CodeBlock code={explanationActivity.example.code} language={language} />
 
             <div className="mt-3 overflow-hidden rounded-xl border border-parchment-200 dark:border-pine-700">
               <div className="flex items-center justify-between bg-parchment-100 px-4 py-2 dark:bg-pine-800">
@@ -258,14 +288,14 @@ export default function LessonScreen({
                   <div className={`text-xs font-bold uppercase tracking-[0.14em] ${isBossChallenge ? 'text-dusk-lavender-600 dark:text-dusk-lavender-400' : 'text-dawn-sand-700 dark:text-dawn-sand-400'}`}>
                     Step 3 · {isBossChallenge ? 'Boss Challenge' : 'Practice'}
                   </div>
-                  <h2 className="font-display mt-1 text-lg font-bold text-pine-900 dark:text-parchment-50">{CHALLENGE_LABEL[lesson.challenge.type]}</h2>
+                  <h2 className="font-display mt-1 text-lg font-bold text-pine-900 dark:text-parchment-50">{CHALLENGE_LABEL[challenge.type]}</h2>
                 </div>
               </div>
               <span className="rounded-full bg-dawn-sand-100 px-2.5 py-1 text-xs font-black text-dawn-sand-800 dark:bg-dawn-sand-500/10 dark:text-dawn-sand-300">+{lesson.xpReward} XP</span>
             </div>
 
-            <p className="mb-3 text-sm font-semibold leading-6 text-pine-800/90 dark:text-parchment-300">{lesson.challenge.prompt}</p>
-            <CodeBlock code={lesson.challenge.code} language={language} />
+            <p className="mb-3 text-sm font-semibold leading-6 text-pine-800/90 dark:text-parchment-300">{challenge.prompt}</p>
+            <CodeBlock code={challenge.code} language={language} />
 
             <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
               <label className="sr-only" htmlFor="lesson-answer">Your answer</label>
@@ -275,7 +305,7 @@ export default function LessonScreen({
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 disabled={feedback === 'correct'}
-                placeholder={CHALLENGE_PLACEHOLDER[lesson.challenge.type]}
+                placeholder={CHALLENGE_PLACEHOLDER[challenge.type]}
                 className="min-h-11 flex-1 rounded-xl border border-parchment-300 bg-parchment-50 px-3.5 py-2.5 text-sm text-pine-900 shadow-inner outline-none transition placeholder:text-moss-600/50 focus:border-robot-cyan-500 focus:ring-2 focus:ring-robot-cyan-500/15 disabled:bg-parchment-100 dark:border-pine-700 dark:bg-pine-950 dark:text-parchment-100 dark:disabled:bg-pine-900"
               />
               {feedback !== 'correct' && (
@@ -320,9 +350,9 @@ export default function LessonScreen({
                 <div className="flex items-center gap-2 font-bold text-dawn-sand-900 dark:text-dawn-sand-300">
                   <Lightbulb size={18} /> Not quite — use the explanation, then try again.
                 </div>
-                <p className="mt-2 text-sm leading-6 text-dawn-sand-900/90 dark:text-dawn-sand-200">{lesson.challenge.wrongAnswerExplanation}</p>
+                <p className="mt-2 text-sm leading-6 text-dawn-sand-900/90 dark:text-dawn-sand-200">{challenge.wrongAnswerExplanation}</p>
                 <div className="mt-2 rounded-xl bg-parchment-50/80 px-3 py-2 text-sm italic text-dawn-sand-900 dark:bg-pine-900/50 dark:text-dawn-sand-300">
-                  Hint: {lesson.challenge.hint}
+                  Hint: {challenge.hints[0]}
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">

@@ -1,5 +1,5 @@
 import { ArrowRight, BrainCircuit, CheckCircle2, ListChecks, Lock, Rocket } from 'lucide-react';
-import { tracks } from '../data/lessons';
+import { getExplanationActivity, tracks } from '../data/lessons';
 import TrackIcon from './TrackIcon';
 import { Mascot } from './Mascot';
 
@@ -69,7 +69,7 @@ export default function ProjectsScreen({
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="font-display text-lg font-bold text-pine-900 dark:text-parchment-50">{lesson.title.replace(/^Project:\s*/, '')}</h2>
-                    <p className="mt-1 line-clamp-3 text-sm leading-6 text-moss-700/80 dark:text-parchment-400">{lesson.explanation}</p>
+                    <p className="mt-1 line-clamp-3 text-sm leading-6 text-moss-700/80 dark:text-parchment-400">{getExplanationActivity(lesson)?.text}</p>
                   </div>
                   <span className="shrink-0 rounded-full bg-dawn-sand-100 px-2.5 py-1 text-xs font-black text-dawn-sand-800 dark:bg-dawn-sand-500/10 dark:text-dawn-sand-300">+{lesson.xpReward} XP</span>
                 </div>
