@@ -1,23 +1,22 @@
 # CodeQuest
 
-A gamified, browser-based coding app: a shared "Programming Foundations"
-track (Python), then an "AI Developer" (Python) specialization — with a
-full dashboard/sidebar app shell, achievements, mastery tracking, and an
-optional AI tutor. A "Game Developer" (C++) specialization exists in the
-data but is postponed — its path card shows "Coming soon" while its
-design gets more attention.
+A gamified, browser-based Python learning app: start with **Python Foundations**,
+continue into **Python Builder · Toward AI**, and learn through short explanations,
+runnable examples, challenges, projects, achievements, mastery tracking, and an
+optional AI tutor. The product UI is intentionally Python-only for this phase.
+Older C++ lesson data remains dormant in the repository for possible future work,
+but it is not exposed in the learning experience.
 
 ## What's here
 
-- **App shell** — a persistent sidebar (Dashboard, Map, Lessons, Challenges,
-  Projects, Achievements, Community, Store) and a header with a real,
-  XP-derived Level badge (100 XP/level), streak, and light/dark toggle.
-  Collapses to a drawer on mobile.
-- **Dashboard** — a mascot greeting, an illustrated horizontal "Learning
-  Map" of the active track, a Continue Learning card, and your most recent
-  achievement. The mascot, the C++/Python track icons, and the map's
-  floating-islands background are real art (`src/assets/`, from the
-  project's own asset pack) — not emoji or hand-drawn placeholders.
+- **App shell** — a persistent sidebar (Dashboard, Learning Map, Lessons,
+  Challenges, Projects, Achievements) and a header with a real, XP-derived
+  Level badge (100 XP/level), streak, and light/dark toggle. Collapses to a
+  drawer on mobile.
+- **Dashboard** — a redesigned Python journey hero, illustrated learning map,
+  honest stage progress, Continue Learning card, recent achievement, and a
+  visible roadmap toward a later Data & AI phase. The mascot, Python brain icon,
+  and floating-island map background are real assets in `src/assets/`.
 - **Map** — the same learning-map visualization full-page, with tabs to
   switch between every track you've unlocked.
 - **Lessons** — the classic locked/unlocked/completed list, with a
@@ -26,29 +25,21 @@ design gets more attention.
 - **Challenges** — every challenge you've unlocked so far, browsable in one
   flat list for review, tagged by type.
 - **Projects** — the track's capstone project lessons as cards.
-- **Achievements** — milestones the app already tracks (first lesson, a
-  first-try solve, visit streaks, XP totals, finishing a track, choosing a
-  path) — a pop-in toast on unlock, plus a grid of all of them.
-- **Community / Store** — both need real backend features (accounts,
-  payments) this app doesn't have, so they're honest "coming soon" pages
-  rather than faked functionality.
+- **Achievements** — Python-focused milestones for the first lesson, first-try
+  solves, streaks, XP totals, finishing Foundations, starting the intermediate
+  track, completing a project, and finishing the current Python journey.
 - Each lesson: explanation → code example → challenge → immediate feedback
   → XP award → unlock next lesson, with quick-jump pills (Explain / Example
   / Challenge) and, for Fix-the-Bug challenges, a "Boss Challenge" visual
   treatment. Three challenge types: Predict-the-Output, Fill-in-the-Blank,
   and Fix-the-Bug.
-- **AI Developer (Python) specialization after Foundations** — 10 lessons:
+- **Python Builder · Toward AI after Foundations** — 10 lessons:
   Lists & Dictionaries, List Comprehensions, Error Handling, Default
   Arguments, Classes & Objects, Files, Working with JSON, Modules &
   Imports, and two capstone projects (a Quiz Game, then a Rule-Based
   Chatbot that ties dictionaries/functions/strings together into a toy
-  "AI" pattern-matcher). Game Developer (C++ — Variables & Types through
-  References, ending in a Health Bar project) has real lesson content
-  too, but is postponed: its path card is disabled ("Coming soon") until
-  it gets its own design pass. C++ has no in-browser compiler (a
-  genuinely separate, much larger project), so its examples show correct,
-  hand-verified output rather than a live-executed one — the same
-  fallback mode Python uses when Pyodide can't load.
+  "AI" pattern-matcher). This phase keeps the public experience focused on Python;
+  dormant C++ lesson data is intentionally not exposed in navigation or progression.
 - An on-demand AI Tutor: after a wrong answer, an "Ask AI Tutor" button
   calls a small backend that asks Claude for a hint. Hints escalate across
   attempts — a gentle nudge on the first miss, a more specific pointer on
@@ -57,7 +48,7 @@ design gets more attention.
   off-topic. It's on-demand rather than automatic so the free, instant
   static hint is never blocked on a network call, and the app works
   exactly as before if the tutor isn't configured.
-- Progress (XP, completed lessons, streak, chosen path, mastery,
+- Progress (XP, completed lessons, streak, mastery,
   achievements) is saved to `localStorage` — refreshing the page does not
   lose it. Still no accounts, no fabricated user identity anywhere.
 - Lesson content lives in one place: `src/data/lessons.ts`, organized into
@@ -67,7 +58,7 @@ design gets more attention.
   [Pyodide](https://pyodide.org) (loaded from a CDN at runtime) so the shown
   output is computed live rather than hand-typed. If Pyodide can't load
   (offline, blocked network), the lesson falls back to the pre-written
-  output stored in the lesson data — the same fallback C++ always uses.
+  output stored in the lesson data.
 
 ## Stack
 

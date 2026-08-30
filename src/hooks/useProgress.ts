@@ -147,20 +147,17 @@ export function useProgress() {
       if (!found) return false;
       const { lesson, track } = found;
 
-      // Any track gated behind a path choice (AI Developer, Game Developer)
-      // only opens up once Foundations is fully complete and the learner
-      // has actually chosen that specific path.
-      if (track.pathId) {
-        if (!isFoundationsComplete || progress.selectedPath !== track.pathId) {
-          return false;
-        }
-      }
+      // Python-only phase: the intermediate Python track opens automatically
+      // after Foundations. The dormant C++ track stays inaccessible until a
+      // future product phase intentionally brings it back.
+      if (track.pathId === 'cpp') return false;
+      if (track.pathId === 'python' && !isFoundationsComplete) return false;
 
       if (lesson.order === 1) return true;
       const previous = track.lessons.find((l) => l.order === lesson.order - 1);
       return previous ? progress.completedLessonIds.includes(previous.id) : true;
     },
-    [progress.completedLessonIds, progress.selectedPath, isFoundationsComplete],
+    [progress.completedLessonIds, isFoundationsComplete],
   );
 
   const isLessonCompleted = useCallback(

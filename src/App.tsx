@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { foundationsTrack, tracks, findLessonWithTrack, type PathId } from './data/lessons';
+import { foundationsTrack, tracks, findLessonWithTrack } from './data/lessons';
 import { useProgress } from './hooks/useProgress';
 import { useTheme } from './hooks/useTheme';
 import Header from './components/Header';
@@ -10,13 +10,10 @@ import LessonsScreen from './components/LessonsScreen';
 import ChallengesScreen from './components/ChallengesScreen';
 import ProjectsScreen from './components/ProjectsScreen';
 import AchievementsScreen from './components/AchievementsScreen';
-import ComingSoonScreen from './components/ComingSoonScreen';
-import { Users, ShoppingBag } from 'lucide-react';
-import PathChoiceScreen from './components/PathChoiceScreen';
 import LessonScreen from './components/LessonScreen';
 import AchievementToast from './components/AchievementToast';
 
-type View = { screen: 'nav' } | { screen: 'path-choice' } | { screen: 'lesson'; lessonId: string };
+type View = { screen: 'nav' } | { screen: 'lesson'; lessonId: string };
 
 export default function App() {
   const [activeNav, setActiveNav] = useState<NavKey>('dashboard');
@@ -25,7 +22,6 @@ export default function App() {
   const {
     xp,
     streak,
-    selectedPath,
     unlockedAchievementIds,
     justUnlocked,
     clearJustUnlocked,
@@ -34,21 +30,14 @@ export default function App() {
     isLessonCompleted,
     getMastery,
     completeLesson,
-    selectPath,
   } = useProgress();
   const { theme, toggleTheme } = useTheme();
 
   const currentLesson =
     view.screen === 'lesson' ? findLessonWithTrack(view.lessonId) : undefined;
 
-  // The track a "current activity" view (Dashboard's map, Lessons' default
-  // tab) should show: Foundations until it's done, then whichever path was
-  // chosen, falling back to Foundations if none has been chosen yet.
   function resolveActiveTrackId(): string {
-    if (!isFoundationsComplete) return foundationsTrack.id;
-    if (selectedPath === 'python') return 'ai-developer';
-    if (selectedPath === 'cpp') return 'game-developer';
-    return foundationsTrack.id;
+    return isFoundationsComplete ? 'ai-developer' : foundationsTrack.id;
   }
 
   function goToNav(nav: NavKey) {
@@ -60,33 +49,35 @@ export default function App() {
   function goToLesson(lessonId: string) {
     if (isLessonUnlocked(lessonId)) {
       setView({ screen: 'lesson', lessonId });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
-  function handleChoosePath(path: PathId) {
-    selectPath(path);
-    setActiveNav('dashboard');
-    setView({ screen: 'nav' });
-  }
-
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="flex min-h-screen bg-[var(--page-bg)]">
       <div className="hidden md:block">
-        <Sidebar active={activeNav} onNavigate={goToNav} />
+        <div className="sticky top-0 h-screen">
+          <Sidebar active={activeNav} onNavigate={goToNav} />
+        </div>
       </div>
 
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
-          <Sidebar active={activeNav} onNavigate={goToNav} onClose={() => setMobileMenuOpen(false)} />
-          <div
-            className="flex-1 bg-black/40"
+          <Sidebar
+            active={activeNav}
+            onNavigate={goToNav}
+            onClose={() => setMobileMenuOpen(false)}
+          />
+          <button
+            type="button"
+            className="flex-1 bg-slate-950/55 backdrop-blur-[2px]"
             onClick={() => setMobileMenuOpen(false)}
-            aria-hidden="true"
+            aria-label="Close menu overlay"
           />
         </div>
       )}
 
-      <div className="flex min-h-screen flex-1 flex-col">
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <Header
           xp={xp}
           streak={streak}
@@ -107,6 +98,8 @@ export default function App() {
                 key={lesson.id}
                 lesson={lesson}
                 language={track.language}
+                totalLessons={track.lessons.length}
+                trackTitle={track.title}
                 alreadyCompleted={isLessonCompleted(lesson.id)}
                 hasNextLesson={Boolean(nextLesson)}
                 onBack={() => goToNav(activeNav)}
@@ -118,19 +111,14 @@ export default function App() {
             );
           })()}
 
-          {view.screen === 'path-choice' && (
-            <PathChoiceScreen onBack={() => goToNav('dashboard')} onChoosePath={handleChoosePath} />
-          )}
-
           {view.screen === 'nav' && activeNav === 'dashboard' && (
             <DashboardScreen
               activeTrack={tracks.find((t) => t.id === resolveActiveTrackId()) ?? foundationsTrack}
               isLessonUnlocked={isLessonUnlocked}
               isLessonCompleted={isLessonCompleted}
               onSelectLesson={goToLesson}
-              showPathChoiceCta={isFoundationsComplete && selectedPath === null}
-              onChoosePath={() => setView({ screen: 'path-choice' })}
               unlockedAchievementIds={unlockedAchievementIds}
+              isFoundationsComplete={isFoundationsComplete}
             />
           )}
 
@@ -150,8 +138,6 @@ export default function App() {
               isLessonCompleted={isLessonCompleted}
               getMastery={getMastery}
               onSelectLesson={goToLesson}
-              isFoundationsComplete={isFoundationsComplete}
-              onChoosePath={() => setView({ screen: 'path-choice' })}
             />
           )}
 
@@ -173,22 +159,6 @@ export default function App() {
 
           {view.screen === 'nav' && activeNav === 'achievements' && (
             <AchievementsScreen unlockedAchievementIds={unlockedAchievementIds} />
-          )}
-
-          {view.screen === 'nav' && activeNav === 'community' && (
-            <ComingSoonScreen
-              title="Community"
-              icon={Users}
-              description="Connect with other learners, share progress, and help each other out."
-            />
-          )}
-
-          {view.screen === 'nav' && activeNav === 'store' && (
-            <ComingSoonScreen
-              title="Store"
-              icon={ShoppingBag}
-              description="Spend XP on themes, avatars, and boosts."
-            />
           )}
         </main>
       </div>

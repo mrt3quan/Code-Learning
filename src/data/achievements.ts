@@ -1,9 +1,4 @@
-// Achievements for milestones the app already tracks. This mirrors the
-// mastery indicator's "basic, not a full system" scope: no separate
-// tracking infrastructure, just thresholds evaluated against progress
-// state that already exists (completed lessons, streak, XP, path, mastery).
-
-import { aiDeveloperTrack, foundationsTrack, gameDeveloperTrack } from './lessons';
+import { aiDeveloperTrack, foundationsTrack } from './lessons';
 
 export interface Achievement {
   id: string;
@@ -16,7 +11,7 @@ export const achievements: Achievement[] = [
   {
     id: 'hello-world',
     title: 'Hello, World!',
-    description: 'Complete your first lesson.',
+    description: 'Complete your first Python lesson.',
     icon: '👋',
   },
   {
@@ -34,7 +29,7 @@ export const achievements: Achievement[] = [
   {
     id: 'week-streak',
     title: 'Week Streak',
-    description: 'Keep a 7-day visit streak going.',
+    description: 'Keep a 7-day learning streak going.',
     icon: '🗓️',
   },
   {
@@ -45,27 +40,27 @@ export const achievements: Achievement[] = [
   },
   {
     id: 'foundations-grad',
-    title: 'Foundations Graduate',
-    description: 'Complete every Programming Foundations lesson.',
+    title: 'Python Foundations Graduate',
+    description: 'Complete every Python Foundations lesson.',
     icon: '🎓',
   },
   {
-    id: 'path-chosen',
-    title: 'Path Chosen',
-    description: 'Pick your specialization track.',
-    icon: '🧭',
+    id: 'python-builder',
+    title: 'Python Builder',
+    description: 'Start the intermediate Python track.',
+    icon: '🐍',
   },
   {
-    id: 'ai-developer',
-    title: 'AI Developer',
-    description: 'Complete the AI Developer track.',
+    id: 'project-builder',
+    title: 'Project Builder',
+    description: 'Complete your first Python project.',
+    icon: '🛠️',
+  },
+  {
+    id: 'ai-ready',
+    title: 'AI Ready',
+    description: 'Complete the Python Builder track and unlock the next AI learning phase.',
     icon: '🤖',
-  },
-  {
-    id: 'game-developer',
-    title: 'Game Developer',
-    description: 'Complete the Game Developer track.',
-    icon: '🎮',
   },
 ];
 
@@ -77,9 +72,6 @@ export interface AchievementProgressInput {
   lessonAttempts: Record<string, number>;
 }
 
-// Recomputed from current state each time, rather than hand-toggled at each
-// call site — the source of truth (lessons completed, streak, xp, path) is
-// already tracked, so this just reads thresholds off it.
 export function evaluateAchievements(input: AchievementProgressInput): string[] {
   const unlocked: string[] = [];
 
@@ -97,14 +89,20 @@ export function evaluateAchievements(input: AchievementProgressInput): string[] 
     unlocked.push('foundations-grad');
   }
 
-  if (input.selectedPath !== null) unlocked.push('path-chosen');
-
-  if (aiDeveloperTrack.lessons.every((l) => input.completedLessonIds.includes(l.id))) {
-    unlocked.push('ai-developer');
+  if (input.completedLessonIds.some((id) => aiDeveloperTrack.lessons.some((l) => l.id === id))) {
+    unlocked.push('python-builder');
   }
 
-  if (gameDeveloperTrack.lessons.every((l) => input.completedLessonIds.includes(l.id))) {
-    unlocked.push('game-developer');
+  if (
+    input.completedLessonIds.some((id) =>
+      aiDeveloperTrack.lessons.some((l) => l.id === id && l.isProject),
+    )
+  ) {
+    unlocked.push('project-builder');
+  }
+
+  if (aiDeveloperTrack.lessons.every((l) => input.completedLessonIds.includes(l.id))) {
+    unlocked.push('ai-ready');
   }
 
   return unlocked;

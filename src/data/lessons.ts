@@ -44,8 +44,8 @@ export interface Track {
 
 export const foundationsTrack: Track = {
   id: 'foundations',
-  title: 'Programming Foundations',
-  subtitle: 'Learn core programming concepts in Python, then apply them to your specialization.',
+  title: 'Python Foundations',
+  subtitle: 'Start from zero and build the core Python skills every later project depends on.',
   language: 'python',
   lessons: [
     {
@@ -249,8 +249,8 @@ export const foundationsTrack: Track = {
 
 export const aiDeveloperTrack: Track = {
   id: 'ai-developer',
-  title: 'AI Developer · Python',
-  subtitle: 'Data structures, error handling, classes, and JSON — building toward real AI-flavored projects.',
+  title: 'Python Builder · Toward AI',
+  subtitle: 'Build stronger Python with data structures, files, classes, JSON, and projects before machine learning and AI.',
   language: 'python',
   pathId: 'python',
   lessons: [
