@@ -2,11 +2,10 @@
 // add more lessons/tracks/activity types here, components should never
 // hardcode lesson copy.
 //
-// A lesson is an ordered list of activities. Today every lesson has exactly
-// two: one `explanation` activity (the concept + a runnable example) and one
-// challenge activity (`predict-output` | `fill-in-blank` | `fix-the-bug`).
-// Adding a new activity type later means adding one new member to the
-// `Activity` union below, not restructuring existing lessons.
+// A lesson is an ordered list of activities: one `explanation` activity (the
+// concept + a runnable example) plus one challenge activity, which can be
+// any member of the `Activity` union below. Adding a new activity type means
+// adding one new member to that union, not restructuring existing lessons.
 
 export interface LessonExample {
   code: string;
@@ -33,21 +32,91 @@ export interface ChallengeActivity {
   hints: [string, string, string];
 }
 
-export type Activity = ExplanationActivity | ChallengeActivity;
+export interface MultipleChoiceActivity {
+  type: 'multiple-choice';
+  code?: string;
+  prompt: string;
+  options: string[];
+  correctAnswer: string;
+  wrongAnswerExplanation: string;
+  hints: [string, string, string];
+}
+
+// Same shape as multiple-choice, but `options` holds lines of code instead
+// of prose — the component renders them in a monospace/code style.
+export interface ClickCodeActivity {
+  type: 'click-code';
+  prompt: string;
+  options: string[];
+  correctAnswer: string;
+  wrongAnswerExplanation: string;
+  hints: [string, string, string];
+}
+
+export interface CodeOrderingActivity {
+  type: 'code-ordering';
+  prompt: string;
+  // The correct order. The component shuffles a copy for display and
+  // compares the learner's arrangement back against this array.
+  correctLines: string[];
+  wrongAnswerExplanation: string;
+  hints: [string, string, string];
+}
+
+export interface CodeEditorActivity {
+  type: 'code-editor';
+  prompt: string;
+  starterCode: string;
+  expectedOutput: string;
+  wrongAnswerExplanation: string;
+  hints: [string, string, string];
+}
+
+export type ChallengeLikeActivity =
+  | ChallengeActivity
+  | MultipleChoiceActivity
+  | ClickCodeActivity
+  | CodeOrderingActivity
+  | CodeEditorActivity;
+
+export type Activity = ExplanationActivity | ChallengeLikeActivity;
 
 export function getExplanationActivity(lesson: Lesson): ExplanationActivity | undefined {
   return lesson.activities.find((a): a is ExplanationActivity => a.type === 'explanation');
 }
 
-export function getChallengeActivities(lesson: Lesson): ChallengeActivity[] {
-  return lesson.activities.filter((a): a is ChallengeActivity => a.type !== 'explanation');
+export function getChallengeActivities(lesson: Lesson): ChallengeLikeActivity[] {
+  return lesson.activities.filter((a): a is ChallengeLikeActivity => a.type !== 'explanation');
 }
 
-// Phase A content: every lesson has exactly one challenge activity. Callers
-// that only need "the" challenge (list badges, etc.) use this instead of
-// assuming array shape.
-export function getPrimaryChallenge(lesson: Lesson): ChallengeActivity | undefined {
+// Every lesson has exactly one challenge activity. Callers that only need
+// "the" challenge (list badges, etc.) use this instead of assuming array
+// shape.
+export function getPrimaryChallenge(lesson: Lesson): ChallengeLikeActivity | undefined {
   return getChallengeActivities(lesson)[0];
+}
+
+// Normalizes any challenge-like activity into the plain {code, answer} shape
+// the AI Tutor grounds its hints on, so useTutorHint/worker don't need to
+// know about every activity type.
+export function describeChallenge(activity: ChallengeLikeActivity): {
+  code: string;
+  correctAnswer: string;
+} {
+  switch (activity.type) {
+    case 'predict-output':
+    case 'fill-in-blank':
+    case 'fix-the-bug':
+      return { code: activity.code, correctAnswer: activity.correctAnswer };
+    case 'multiple-choice':
+      return { code: activity.code ?? '', correctAnswer: activity.correctAnswer };
+    case 'click-code':
+      return { code: activity.options.join('\n'), correctAnswer: activity.correctAnswer };
+    case 'code-ordering':
+      return { code: activity.correctLines.join('\n'), correctAnswer: activity.correctLines.join('\n') };
+    case 'code-editor':
+      return { code: activity.starterCode, correctAnswer: activity.expectedOutput };
+  }
 }
 
 export interface Lesson {
@@ -682,6 +751,139 @@ export const aiDeveloperTrack: Track = {
       ],
       xpReward: 25,
       isProject: true,
+    },
+    {
+      id: 'truthy-falsy',
+      order: 11,
+      title: 'Truthy & Falsy Values',
+      activities: [
+        {
+          type: 'explanation',
+          text:
+            "Every value in Python is truthy or falsy when used somewhere a True/False is expected, like an if condition. 0, empty strings (\"\"), empty lists ([]), and None are all falsy. Pretty much everything else — non-zero numbers, non-empty strings, non-empty lists — is truthy. This lets you write if my_list: instead of if len(my_list) > 0:.",
+          example: {
+            code: 'cart = []\nif cart:\n    print("You have items")\nelse:\n    print("Cart is empty")',
+            output: 'Cart is empty',
+          },
+        },
+        {
+          type: 'multiple-choice',
+          code: 'name = ""\nif name:\n    print("Has a name")\nelse:\n    print("No name yet")',
+          prompt: 'What does this print?',
+          options: ['Has a name', 'No name yet', 'An error', 'Nothing — the if is skipped entirely'],
+          correctAnswer: 'No name yet',
+          wrongAnswerExplanation:
+            'name is an empty string "", and empty strings are falsy in Python. So if name: is False, and the else branch runs, printing "No name yet".',
+          hints: [
+            'An empty string is one of Python\'s falsy values — think about what that means for the if check.',
+            '"" (empty string) is falsy, just like 0, [], and None. if name: is really asking "is name non-empty?"',
+            'Since name is "", if name: evaluates to False, so Python runs the else block and prints "No name yet".',
+          ],
+        },
+      ],
+      xpReward: 15,
+    },
+    {
+      id: 'checking-membership',
+      order: 12,
+      title: 'Checking Membership',
+      activities: [
+        {
+          type: 'explanation',
+          text:
+            "The in keyword checks whether a value exists inside a list, string, or dictionary. For a list, it scans every item for a match. For a string, it checks for a substring anywhere inside. For a dictionary, it checks the keys, not the values. It always evaluates to True or False, so it's often used directly inside an if.",
+          example: {
+            code: 'inventory = ["sword", "shield", "potion"]\nprint("shield" in inventory)',
+            output: 'True',
+          },
+        },
+        {
+          type: 'click-code',
+          prompt:
+            'You have allowed_users = ["ava", "sam"]. Click the line that correctly checks whether "sam" is in that list.',
+          options: [
+            'if allowed_users = "sam":',
+            'if "sam" == allowed_users:',
+            'if "sam" in allowed_users:',
+            'if allowed_users.contains("sam"):',
+          ],
+          correctAnswer: 'if "sam" in allowed_users:',
+          wrongAnswerExplanation:
+            'Python checks list membership with the in keyword: if "sam" in allowed_users:. There\'s no .contains() method on lists in Python (that\'s Java/JS), a single = is assignment not comparison, and == would compare "sam" to the whole list rather than searching inside it.',
+          hints: [
+            'Python has a dedicated keyword for "is this value inside that collection?" — it\'s not a method call.',
+            'Rule out the ones that are wrong for a specific reason: = assigns, == compares two whole values, .contains() isn\'t a Python list method.',
+            'The correct line is if "sam" in allowed_users: — in searches every item in the list for a match.',
+          ],
+        },
+      ],
+      xpReward: 15,
+    },
+    {
+      id: 'building-a-loop',
+      order: 13,
+      title: 'Building a Simple Loop',
+      activities: [
+        {
+          type: 'explanation',
+          text:
+            "Writing a loop from scratch means putting its parts in the right order: set up anything the loop needs before it starts, write the for or while line, then indent the body underneath. Get the order wrong — like using a variable before it's created, or writing the loop header after the body — and the code won't run.",
+          example: {
+            code: 'total = 0\nfor n in [4, 8, 15]:\n    total += n\nprint(total)',
+            output: '27',
+          },
+        },
+        {
+          type: 'code-ordering',
+          prompt: 'Arrange these lines so the program prints the total of the numbers in the list.',
+          correctLines: [
+            'numbers = [3, 6, 9]',
+            'total = 0',
+            'for n in numbers:',
+            '    total += n',
+            'print(total)',
+          ],
+          wrongAnswerExplanation:
+            'numbers has to exist before the loop reads it, and total has to start at 0 before anything gets added to it. The for line introduces n, and only then can the indented total += n use it — print(total) has to come last, after the loop has finished adding everything up.',
+          hints: [
+            'Anything a line depends on has to be defined above it — find what each line needs first.',
+            'numbers and total both need to exist before the for loop starts; the indented total += n line depends on the for line right above it.',
+            'The order is: numbers = [3, 6, 9], then total = 0, then for n in numbers:, then the indented total += n, then print(total) last.',
+          ],
+        },
+      ],
+      xpReward: 15,
+    },
+    {
+      id: 'first-program',
+      order: 14,
+      title: 'Your First Program',
+      activities: [
+        {
+          type: 'explanation',
+          text:
+            "Time to write real code instead of just reading it. The editor below runs actual Python — write a program, hit Run, and see your own output. If you make a mistake, Python will tell you what went wrong; read the error message, it usually points right at the problem.",
+          example: {
+            code: 'print("Hello, world!")',
+            output: 'Hello, world!',
+          },
+        },
+        {
+          type: 'code-editor',
+          prompt:
+            'Write a program that prints the numbers 1 through 5, each on its own line, using a loop.',
+          starterCode: '# Write your code here\n',
+          expectedOutput: '1\n2\n3\n4\n5',
+          wrongAnswerExplanation:
+            "range(1, 6) produces 1, 2, 3, 4, 5 — range stops before its second argument, so range(1, 6) is needed to include 5. A loop like for i in range(1, 6): print(i) prints each number on its own line.",
+          hints: [
+            'You need a loop that runs 5 times and prints a number each time — range() is the tool for that.',
+            'range(1, 6) produces 1 through 5. Remember range stops one short of its second argument.',
+            'Try: for i in range(1, 6):\\n    print(i) — that prints 1, 2, 3, 4, 5, each on its own line.',
+          ],
+        },
+      ],
+      xpReward: 15,
     },
   ],
 };

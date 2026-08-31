@@ -12,15 +12,17 @@ import {
   Target,
 } from 'lucide-react';
 import {
+  describeChallenge,
   getExplanationActivity,
   getPrimaryChallenge,
-  type ChallengeType,
+  type Activity,
   type Language,
   type Lesson,
 } from '../data/lessons';
 import { usePyodide } from '../hooks/usePyodide';
 import { useTutorHint } from '../hooks/useTutorHint';
 import CodeBlock from './CodeBlock';
+import ChallengeBody from './challenges/ChallengeBody';
 import { Mascot } from './Mascot';
 import bgFloatingIslands from '../assets/bg-floating-islands.png';
 
@@ -38,24 +40,14 @@ interface LessonScreenProps {
 
 type Feedback = 'none' | 'correct' | 'incorrect';
 
-function normalizeOutput(answer: string): string {
-  return answer.trim().toLowerCase().replace(/\s+/g, ' ');
-}
-
-function normalizeCode(answer: string): string {
-  return answer.trim().replace(/\s+/g, ' ');
-}
-
-const CHALLENGE_LABEL: Record<ChallengeType, string> = {
+const CHALLENGE_LABEL: Record<Exclude<Activity['type'], 'explanation'>, string> = {
   'predict-output': 'Predict the Output',
   'fill-in-blank': 'Fill in the Blank',
   'fix-the-bug': 'Fix the Bug',
-};
-
-const CHALLENGE_PLACEHOLDER: Record<ChallengeType, string> = {
-  'predict-output': 'Type what this prints…',
-  'fill-in-blank': 'Type what goes in the blank…',
-  'fix-the-bug': 'Type the fix…',
+  'multiple-choice': 'Multiple Choice',
+  'click-code': 'Click the Correct Code',
+  'code-ordering': 'Code Ordering',
+  'code-editor': 'Write & Run Code',
 };
 
 export default function LessonScreen({
@@ -72,14 +64,14 @@ export default function LessonScreen({
   const { status, runPython } = usePyodide();
   const tutor = useTutorHint();
   const [liveOutput, setLiveOutput] = useState<string | null>(null);
-  const [answer, setAnswer] = useState('');
+  const [lastUserAnswer, setLastUserAnswer] = useState('');
   const [feedback, setFeedback] = useState<Feedback>('none');
   const [justAwardedXp, setJustAwardedXp] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
 
   // Every authored lesson has exactly one explanation and one challenge
-  // activity in Phase A — Phase B may add more challenge activities per
-  // lesson, but every lesson always starts with its concept explanation.
+  // activity — every lesson always starts with its concept explanation.
   const explanationActivity = getExplanationActivity(lesson)!;
   const challenge = getPrimaryChallenge(lesson)!;
   const challengeIndex = lesson.activities.findIndex((a) => a.type !== 'explanation');
@@ -113,12 +105,9 @@ export default function LessonScreen({
   const progressPct = Math.round((lesson.order / totalLessons) * 100);
   const isBossChallenge = challenge.type === 'fix-the-bug';
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function handleChallengeSubmit(isCorrect: boolean, userAnswerText: string) {
     if (feedback === 'correct') return;
-
-    const normalize = challenge.type === 'predict-output' ? normalizeOutput : normalizeCode;
-    const isCorrect = normalize(answer) === normalize(challenge.correctAnswer);
+    setLastUserAnswer(userAnswerText);
 
     if (isCorrect) {
       setFeedback('correct');
@@ -136,21 +125,22 @@ export default function LessonScreen({
   }
 
   function handleRetry() {
-    setAnswer('');
     setFeedback('none');
+    setRetryCount((n) => n + 1);
     tutor.reset();
   }
 
   function handleAskTutor() {
+    const { code, correctAnswer } = describeChallenge(challenge);
     tutor.askTutor({
       lessonTitle: lesson.title,
       explanation: explanationActivity.text,
-      challengeCode: challenge.code,
+      challengeCode: code,
       challengePrompt: challenge.prompt,
-      correctAnswer: challenge.correctAnswer,
+      correctAnswer,
       staticHints: challenge.hints,
       staticExplanation: challenge.wrongAnswerExplanation,
-      userAnswer: answer,
+      userAnswer: lastUserAnswer,
       wrongAttempts,
     });
   }
@@ -294,30 +284,13 @@ export default function LessonScreen({
               <span className="rounded-full bg-dawn-sand-100 px-2.5 py-1 text-xs font-black text-dawn-sand-800 dark:bg-dawn-sand-500/10 dark:text-dawn-sand-300">+{lesson.xpReward} XP</span>
             </div>
 
-            <p className="mb-3 text-sm font-semibold leading-6 text-pine-800/90 dark:text-parchment-300">{challenge.prompt}</p>
-            <CodeBlock code={challenge.code} language={language} />
-
-            <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <label className="sr-only" htmlFor="lesson-answer">Your answer</label>
-              <input
-                id="lesson-answer"
-                type="text"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                disabled={feedback === 'correct'}
-                placeholder={CHALLENGE_PLACEHOLDER[challenge.type]}
-                className="min-h-11 flex-1 rounded-xl border border-parchment-300 bg-parchment-50 px-3.5 py-2.5 text-sm text-pine-900 shadow-inner outline-none transition placeholder:text-moss-600/50 focus:border-robot-cyan-500 focus:ring-2 focus:ring-robot-cyan-500/15 disabled:bg-parchment-100 dark:border-pine-700 dark:bg-pine-950 dark:text-parchment-100 dark:disabled:bg-pine-900"
-              />
-              {feedback !== 'correct' && (
-                <button
-                  type="submit"
-                  disabled={answer.trim() === ''}
-                  className="min-h-11 rounded-xl bg-robot-cyan-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-robot-cyan-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-robot-cyan-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  Check answer
-                </button>
-              )}
-            </form>
+            <ChallengeBody
+              key={retryCount}
+              activity={challenge}
+              language={language}
+              disabled={feedback === 'correct'}
+              onSubmit={handleChallengeSubmit}
+            />
 
             {feedback === 'correct' && (
               <div className="animate-pop-in mt-4 rounded-2xl border border-moss-200 bg-moss-50 p-4 dark:border-moss-800 dark:bg-moss-950/40">

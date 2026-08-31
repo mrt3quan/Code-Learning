@@ -1,5 +1,5 @@
 import { CheckCircle2 } from 'lucide-react';
-import { getPrimaryChallenge, tracks, type ChallengeType } from '../data/lessons';
+import { getPrimaryChallenge, tracks, type Activity } from '../data/lessons';
 import TrackIcon from './TrackIcon';
 
 interface ChallengesScreenProps {
@@ -8,16 +8,24 @@ interface ChallengesScreenProps {
   onSelectLesson: (lessonId: string) => void;
 }
 
-const CHALLENGE_LABEL: Record<ChallengeType, string> = {
+const CHALLENGE_LABEL: Record<Exclude<Activity['type'], 'explanation'>, string> = {
   'predict-output': 'Predict the Output',
   'fill-in-blank': 'Fill in the Blank',
   'fix-the-bug': 'Fix the Bug',
+  'multiple-choice': 'Multiple Choice',
+  'click-code': 'Click the Correct Code',
+  'code-ordering': 'Code Ordering',
+  'code-editor': 'Write & Run Code',
 };
 
-const CHALLENGE_COLOR: Record<ChallengeType, string> = {
+const CHALLENGE_COLOR: Record<Exclude<Activity['type'], 'explanation'>, string> = {
   'predict-output': 'bg-robot-cyan-100 text-robot-cyan-700 dark:bg-robot-cyan-400/10 dark:text-robot-cyan-300',
   'fill-in-blank': 'bg-dawn-sand-100 text-dawn-sand-700 dark:bg-dawn-sand-400/10 dark:text-dawn-sand-300',
   'fix-the-bug': 'bg-dusk-lavender-100 text-dusk-lavender-700 dark:bg-dusk-lavender-400/10 dark:text-dusk-lavender-300',
+  'multiple-choice': 'bg-moss-100 text-moss-700 dark:bg-moss-400/10 dark:text-moss-300',
+  'click-code': 'bg-sky-mist-100 text-sky-mist-700 dark:bg-sky-mist-400/10 dark:text-sky-mist-300',
+  'code-ordering': 'bg-bloom-coral-100 text-bloom-coral-700 dark:bg-bloom-coral-400/10 dark:text-bloom-coral-300',
+  'code-editor': 'bg-robot-cyan-100 text-robot-cyan-700 dark:bg-robot-cyan-400/10 dark:text-robot-cyan-300',
 };
 
 export default function ChallengesScreen({
